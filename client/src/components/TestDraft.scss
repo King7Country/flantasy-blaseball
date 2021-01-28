@@ -1,0 +1,10 @@
+.tab {
+    display: none;
+
+    &--pitchers {
+        display: block;
+    }
+    &--batters {
+        display: block;
+    }
+}

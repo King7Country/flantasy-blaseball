@@ -1,0 +1,41 @@
+//
+// GLOBAL FONTS
+//
+
+@mixin global-fonts {
+    font-family: 'Avenir Next', 'Roboto', sans-serif;
+}
+
+
+//
+// MEDIA QUERRIES
+//
+
+@mixin tablet {
+    @media screen and (min-width: $tablet-breakpoint) {
+      @content;
+    }
+};
+
+$tablet-breakpoint: 768px;
+
+@mixin desk {
+    @media screen and (min-width: $desk-breakpoint) {
+      @content;
+    }
+};
+
+$desk-breakpoint: 1200px;
+
+
+//
+// FLEX BOX
+//
+
+@mixin flex-container($justify: center, $align: center, $wrap: wrap, $direction: row) {
+    display: flex;
+    justify-content: $justify;
+    align-items: $align;
+    flex-wrap: $wrap;
+    flex-direction: $direction;
+}

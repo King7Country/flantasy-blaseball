@@ -1,0 +1,72 @@
+@import "../../styles/global.scss";
+
+.header {
+    margin-bottom: 2.5em;
+    padding-left: 2.5em;
+    width: 100%;
+    height: 5em;
+    @include flex-container(space-between);
+    position: relative;
+    color: white;
+    background-color: #343a40;
+}
+
+.nav {
+    width: 100%;
+    // add css animations
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    display: block;
+    color: white;
+    background-color: #343a40;
+
+    &--close {
+        display: none;
+    }
+
+    &--open {
+        @extend .nav;
+        display: block;
+    }
+
+    &__toggle {
+        position: absolute;
+        right: 2.5em;
+
+        &--open {
+            @extend .nav__toggle;
+            // top: .25em;
+        }
+
+        &--closed {
+            @extend .nav__toggle;
+        }
+    }
+
+    &__list {
+        margin: 3.5em;
+        @include flex-container(center, center, wrap, column);
+        list-style: none;
+        color: white;
+    }
+
+    &__item {
+        margin: 2.5em 0;
+        color: white;
+    }
+
+    &__link {
+        padding: 1em;
+        color: white;
+        text-decoration: none;
+        display: inline-block
+    }
+}
+
+a {
+    padding: 1em;
+    color: white;
+    text-decoration: none;
+    display: inline-block
+}
