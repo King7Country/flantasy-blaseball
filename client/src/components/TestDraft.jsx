@@ -4,6 +4,8 @@ import fire from "../config/fire";
 import { v4 as uuidv4 } from 'uuid';
 import NameModal from '../components/NameModal/NameModal'
 import "./TestDraft.scss"
+import Login from "../components/Login/Login"
+
 // import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 
@@ -117,11 +119,13 @@ class TestDraft extends React.Component {
         console.log("updated batting state: ", this.state.battingStats)
       }
     } else {
-      return alert("max number of players already selected")
+      return alert("max number of players already selected", "Don't forget to turn this into some kind of modal")
     }    
   }
 
   finishDraft(state) {
+    const totalPlayers = this.state.draftedPitchers.length + this.state.draftedBatters.length;
+
     let teamName = this.state.teamName;
     const userId = fire.auth().currentUser.uid;
     let teamId = uuidv4();
@@ -132,13 +136,21 @@ class TestDraft extends React.Component {
       pitchers: state.draftedPitchers,
       batters: state.draftedBatters,
     }
-    fire.database().ref('teams').push(newTeam);
 
-    // show finished message with link to teams.  empty fields?
-    alert("show finished message with link to users teams page")
+    if (totalPlayers = 9) {
+      fire.database().ref('teams').push(newTeam);
+
+      // show finished message with link to teams.  empty fields?
+      alert("show finished message with link to users teams page")
+    } else if (totalPlayers < 9) {
+      return alert("You've only selected " + totalPlayers +  " players, select a few more players until you have 9 on your team.", "Don't forget to turn this into some kind of modal")
+
+    }
+  
   }
 
   render() {
+    const user = fire.auth().currentUser;
     const pitchingStats = this.state.pitchingStats;
     const draftedPitchers = this.state.draftedPitchers;
     const battingStats = this.state.battingStats;
@@ -150,15 +162,18 @@ class TestDraft extends React.Component {
     console.log("combined: ", pitchingStats.length + battingStats.length)
 
 
-    if (this.state.showModal) {
+    // if (!user) {
+    //     return (
+    //         <Login />
+    //     );
+    // } 
+     if (this.state.showModal) {
       return (
         <NameModal 
           showModal={this.state.showModal} 
           value={this.state.teamName} 
           onChange={this.handleTeamName} 
           onClick={this.handleCloseModal} />
-
-          
       )
     }
      else if (!this.state.pitchingStats.length && !this.state.battingStats.length ) {
@@ -189,7 +204,7 @@ class TestDraft extends React.Component {
                   Name
               </th>
               <th>
-                  Position
+                  POS
               </th>
             </tr>
           </thead>
@@ -213,7 +228,7 @@ class TestDraft extends React.Component {
                   Name
               </th>
               <th>
-                  Position
+                  POS
               </th>
             </tr>
           </thead>
@@ -257,37 +272,52 @@ class TestDraft extends React.Component {
           <thead>
             <tr>
               <th>
-                  Name
+                Name
               </th>
               <th>
-                  Position
+                POS
               </th>
               <th>
-                  W
+                G
               </th>
               <th>
-                  L
+                W
               </th>
               <th>
-                  ERA
+                L
               </th>
               <th>
-                  G
+                ERA
               </th>
               <th>
-                  SO
+                QS
               </th>
               <th>
-                  H
+                SHO
               </th>
               <th>
-                  O
+                H
               </th>
               <th>
-                  HR
+                R
               </th>
               <th>
-                  R
+                HR
+              </th>
+              <th>
+                O
+              </th>
+              <th>
+                W
+              </th>
+              <th>
+                SO
+              </th>
+              <th>
+                WHIP
+              </th>
+              <th>
+                Draft
               </th>
             </tr>
           </thead>
@@ -296,15 +326,19 @@ class TestDraft extends React.Component {
               <tr key={pitchingStats.id}>
                 <td>{pitchingStats.player_name}</td> 
                 <td>Pitcher</td>
+                <td>{pitchingStats.games}</td>
                 <td>{pitchingStats.wins}</td>
                 <td>{pitchingStats.losses}</td>
                 <td>{pitchingStats.era}</td>
-                <td>{pitchingStats.games}</td>
+                <td>{pitchingStats.quality_starts}</td> 
                 <td>{pitchingStats.shutouts}</td>
                 <td>{pitchingStats.hits_allowed}</td>
-                <td>{pitchingStats.outs_recorded}</td>
-                <td>{pitchingStats.hrs_allowed}</td>
                 <td>{pitchingStats.runs_allowed}</td>
+                <td>{pitchingStats.hrs_allowed}</td>
+                <td>{pitchingStats.outs_recorded}</td>
+                <td>{pitchingStats.walks}</td> 
+                <td>{pitchingStats.strikeouts}</td> 
+                <td>{pitchingStats.whip}</td> 
                 <td>
                   <button 
                     className="draft"

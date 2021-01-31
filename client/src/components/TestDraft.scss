@@ -8,3 +8,35 @@
         display: block;
     }
 }
+
+table {
+    // width: 100%;
+    border-collapse: collapse;
+
+}
+
+th {
+    padding: .15em;
+
+}
+
+td {
+    // max-width: 5em;
+    padding: .15em;
+    // overflow-x: hidden;
+    // text-align: center;
+    border-spacing: 0px;
+    // background-color: gainsboro;
+    // border-bottom: 1px solid gainsboro;
+
+}
+
+tr {
+    // margin-bottom: .25em;
+    border-bottom: 1px solid gainsboro;
+    // background-color: rgb(255, 247, 255);
+
+    &:hover {
+        background-color: rgb(255, 247, 255);
+    }
+}

@@ -1,69 +1,68 @@
-import React from "react";
-import './App.css';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import { withFirebase } from './components/Firebase';
-import { AuthUserContext } from './components/Session';
-import Header from "./components/Header/Header"
-import TestDraft from "./pages/Testing/TestDraft";
-import PlayerList from "./components/PlayerList/PlayerList";
-import Signup from "./components/Signup/Signup";
-import Login from "./components/Login/Login";
-import MyTeam from "./components/MyTeam/MyTeam"
-import TestAdmin from "./pages/Testing/TestAdmin";
-
-
-import * as ROUTES from "./constants/routes";
+import fire from './config/fire';
+import './App.css';
+import Login from "./components/Login/Login"
+import Home from "./components/Home/Home"
+import Standings from "./components/Standings/Standings"
+import TestDraft from "./components/TestDraft"
+import TestDraftBatters from "./components/TestDraftBatters"
+// import Header from "./components/Header/Header"
 
 
 class App extends React.Component {
 
-  constructor(props) {
-    super(props);
- 
-    this.state = {
-      authUser: null,
-    };
+  state = {
+    user: "",
+    isAuthenticated: false
   }
 
   componentDidMount() {
-    this.props.firebase.auth.onAuthStateChanged(
-      authUser => {
-        authUser
-          ? this.setState({ authUser })
-          : this.setState({ authUser: null });
-      }
-    );
+     this.authListener();
   }
 
-  // componentWillUnmount() {
-  //   this.listener();
-  // }
+  authListener() {
+    fire.auth().onAuthStateChanged((user) => {
+      console.log(user.uid)
+      if (user) {
+        this.setState({ user: user })
+        this.setState({ isAuthenticated: true })
+        // localStorage.setItem('isAuthenticated', user.uid)
+      } else {
+        this.setState({ user: null })
+        this.setState({ isAuthenticated: false })
+      }
+    })
+  }
 
   render() {
-console.log("authUser: ", this.state.authUser)
+
+    const user = this.state.user;
+    function PrivateRoute({ component: Component, ...rest }) {
+      return <Route {...rest} render={(props) => (localStorage.isAuthenticated === "true" ? <Component {...props} /> : <Redirect to="login" />)} />
+    }
+    
     return (
-      <AuthUserContext.Provider value={this.state.authUser}>
-        <Router>
-          <Header />
-          <Switch>
-    
-            <Route path={ROUTES.SIGNUP} exact component={Signup} />
-            <Route path={ROUTES.LOGIN} exact component={Login} />
-            {/* <Route path="/landing" exact component={Landing} /> */}
-    
-    
-            <Route path="/myteam" component={MyTeam} />
 
-            {/* test routes */}
-            <Route path="/draft" exact component={TestDraft} />
-            <Route path="/" exact component={PlayerList} />
-            <Route path="/testadmin" component={TestAdmin} />
+      <Router>
 
-          </Switch>
-        </Router>
-        </AuthUserContext.Provider>
+        <Switch>
+          <PrivateRoute path="/" exact component={(routerProps) => <Home {...routerProps} user={user} />} />
+          <Route path="/login" render={(routerProps) => <Login {...routerProps} user={user} />} />
+
+          <PrivateRoute path="/standings" exact component={(routerProps) => <Standings {...routerProps} user={user} />} />
+          {/* <Route path="/login" component={Login} /> */}
+          {/* <Route path="/playerlist" component={PlayerList} /> */}
+          <PrivateRoute path="/testdraft" exact component={TestDraft} />
+          <PrivateRoute path="/testdraftbatters" component={TestDraftBatters} />
+
+          <Route path="/home" component={Home} />
+        </Switch>
+
+      </Router>
+
     );
   }
 }
 
-export default withFirebase(App);
+export default App;

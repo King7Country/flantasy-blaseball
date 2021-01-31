@@ -1,23 +1,18 @@
 import React from 'react'
 import "../Header/Header.scss"
 import { Link } from "react-router-dom";
-import SignOutButton from '../Signout/Signout';
-import * as ROUTES from '../../constants/routes';
-import { AuthUserContext } from '../Session';
 
 let toggleNav = "--close"
 
-const Navigation = ({ authUser }) => (
-    <div>
-        <AuthUserContext.Consumer>
-        {authUser =>
-            authUser ? <NavigationAuth /> : <NavigationNonAuth />
-        }
-        </AuthUserContext.Consumer>
-    </div>
-  );
+// const Navigation = ({ authUser }) => (
+//     <div>
+//         {authUser =>
+//             authUser ? <NavigationAuth /> : <NavigationNonAuth />
+//         }
+//     </div>
+//   );
 
-  const NavigationAuth = () => (
+//   const NavigationAuth = () => (
     // <nav className={`nav${toggleNav}`}>
     // <button class="nav__toggle--closed"
     //     onClick={this.props.function}
@@ -41,11 +36,10 @@ const Navigation = ({ authUser }) => (
     //         </Link>
     //     </li>
     // </ul>
-    <SignOutButton />
     // </nav>
-  );
+//   );
 
-  const NavigationNonAuth = () => (
+//   const NavigationNonAuth = () => (
     // <nav className={`nav${toggleNav}`}>
     // <button class="nav__toggle--closed"
     //     onClick={this.props.function}
@@ -60,8 +54,8 @@ const Navigation = ({ authUser }) => (
     //     </li>
     // </ul>
     // </nav>
-    <p>You're signed out</p>
-  );
+//     <p>You're signed out</p>
+//   );
 
 class Header extends React.Component {
 
@@ -95,7 +89,7 @@ class Header extends React.Component {
                         >
                         Menu
                 </button> */}
-                <Navigation />
+                {/* <Navigation /> */}
             </header>
           
             </>

@@ -1,9 +1,6 @@
 import React from 'react'
 import "../Header/Header.scss"
 import { Link } from "react-router-dom";
-import SignOutButton from '../Signout/Signout';
-import * as ROUTES from '../../constants/routes';
-import { AuthUserContext } from '../Session';
 
 
 let toggleNav = "--close"
