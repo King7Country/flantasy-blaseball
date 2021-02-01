@@ -14,10 +14,9 @@ class Home extends Component {
         newPitcherStats: [],
         origBatterStats: [],
         newBatterStats: [], 
-        //set a limit for teams and write logic in db call and click handler and conditional rendering
+        updatedPitchers: [],
+
         teamsWithPoints: [],
-        // pitchersThisWeek: [],
-        // battersThisWeek: [],
     }
 
     componentDidMount() {
@@ -52,10 +51,6 @@ class Home extends Component {
         })
         .then(() => {
             this.getNewPlayerStats();
-            // this.getNewPitcherStats();
-            //may need to call getNewbatterStats at the end of pitcher functions so that it doesn't overwrite the new pitcher data returned
-            // this.getNewBatterStats();
-            // this.putHumptyDumptyTogetherAgain()
         })
     }
 
@@ -99,7 +94,6 @@ class Home extends Component {
             //  axios.get(`http://localhost:7777/pitchers-list/${pitcherIdString}`) //actual API
              axios.get(`http://localhost:7777/simulated-pitchers/${pitcherIdString}`) //simulated API
               .then(res => {
-                //   console.log("pitcher res: ", res.data)
                   this.setState({newPitcherStats: res.data});
                 //   console.log("newPitcherStats: ", this.state.newPitcherStats)
 
@@ -110,7 +104,6 @@ class Home extends Component {
             //   axios.get(`http://localhost:7777/batters-list/${batterIdString}`) //actual API
               axios.get(`http://localhost:7777/simulated-batters/${batterIdString}`) //simulated API
                 .then(res => {
-                    console.log("batter res: ", res.data)
                     return this.setState({newBatterStats: res.data});
                     // this.determinePitcherPoints(this.state.origBatterStats, this.state.newBatterStats)
 
@@ -123,9 +116,6 @@ class Home extends Component {
      }
 
      determinePlayerPoints(oldPitchers, newPitchers, oldBatters, newBatters) {
-        console.log("oldPitchers: ", oldPitchers)
-
-        console.log("newPitchers: ", newPitchers)
 
         //call conversion function
         const oldPitchersConverted = this.convertIntObj(oldPitchers);
@@ -134,25 +124,25 @@ class Home extends Component {
         const newBattersConverted = this.convertIntObj(newBatters);
         //IMPORTANT: the conversion will mess up some player_id's, must filter by name and reset id's in order to filter below
         //reset pitcher Ids
-        newPitchers.map(newPitcher => {
+        oldPitchers.map(oldPitcher => {
 
             newPitchersConverted.map(newConverted => {
 
-                if (newConverted.player_name === newConverted.player_name) {
-                    newConverted.player_id = newPitcher.player_id;
-                    newConverted.team_id = newPitcher.team_id;
+                if (newConverted.player_name === oldPitcher.player_name) {
+                    newConverted.player_id = oldPitcher.player_id;
+                    newConverted.team_id = oldPitcher.team_id;
                 }
             })
         })
 
         //reset batters ids
-        newBatters.map(newBatter => {
+        oldBatters.map(oldBatter => {
 
             newBattersConverted.map(newConverted => {
 
-                if (newConverted.player_name === newConverted.player_name) {
-                    newConverted.player_id = newBatter.player_id;
-                    newConverted.team_id = newBatter.team_id;
+                if (newConverted.player_name === oldBatter.player_name) {
+                    newConverted.player_id = oldBatter.player_id;
+                    newConverted.team_id = oldBatter.team_id;
                 }
             })
         })
@@ -172,62 +162,45 @@ class Home extends Component {
                  if (oldPitcher.player_name === newPitcher.player_name) {
                      //iterate through object and subtract new stat values from old
                      let updatedPitcher = Object.keys(oldPitcher).reduce((a, i) => {
-                         a[i] = oldPitcher[i] - newPitcher[i];
+                         a[i] = newPitcher[i] - oldPitcher[i];
                          return a;
                     }, {});
                     //set fantasy points: multiply updated stat values by point factor
                     //*IMPORTANT: need to re-set name and id to value of newPitcher as the subtraction above returns NaN for any string values
-                    updatedPitcher.batters_faced = updatedPitcher.batters_faced * .5;
-                    updatedPitcher.bb_per_9 = updatedPitcher.bb_per_9 * .5;
-                    updatedPitcher.era = updatedPitcher.era * .5;
-                    updatedPitcher.games = newPitcher.games + 1; //for simulation purposes
-                    updatedPitcher.hits_allowed = updatedPitcher.hits_allowed * .5;
-                    updatedPitcher.hits_per_9 = updatedPitcher.hits_per_9 * .5;
-                    updatedPitcher.hpbs = updatedPitcher.hpbs * .5;
-                    updatedPitcher.hr_per_9 = updatedPitcher.hr_per_9 * .5;
-                    updatedPitcher.hrs_allowed = updatedPitcher.hrs_allowed * .5;
-                    updatedPitcher.innings = updatedPitcher.innings * .5;
-                    updatedPitcher.k_bb = updatedPitcher.k_bb * .5;
-                    updatedPitcher.k_per_9 = updatedPitcher.k_per_9 * .5;
-                    updatedPitcher.losses = updatedPitcher.losses * .5;
-                    updatedPitcher.outs_recorded = updatedPitcher.outs_recorded  * .5;
-                    updatedPitcher.pitch_count = updatedPitcher.pitch_count * .5;
+                    updatedPitcher.batters_faced = updatedPitcher.batters_faced //* .5;
+                    updatedPitcher.bb_per_9 = updatedPitcher.bb_per_9 //* .5;
+                    updatedPitcher.era = updatedPitcher.era //* .5;
+                    updatedPitcher.games = newPitcher.games;
+                    updatedPitcher.hits_allowed = updatedPitcher.hits_allowed //* .5;
+                    updatedPitcher.hits_per_9 = updatedPitcher.hits_per_9 //* .5;
+                    updatedPitcher.hpbs = updatedPitcher.hpbs //* .5;
+                    updatedPitcher.hr_per_9 = updatedPitcher.hr_per_9 //* .5;
+                    updatedPitcher.hrs_allowed = updatedPitcher.hrs_allowed //* .5;
+                    updatedPitcher.innings = updatedPitcher.innings * 3; 
+                    updatedPitcher.k_bb = updatedPitcher.k_bb //* .5;
+                    updatedPitcher.k_per_9 = updatedPitcher.k_per_9 //* .5;
+                    updatedPitcher.losses = updatedPitcher.losses //* .5;
+                    updatedPitcher.outs_recorded = updatedPitcher.outs_recorded * 1;
+                    updatedPitcher.pitch_count = updatedPitcher.pitch_count //* .5; !
                     updatedPitcher.player_id = newPitcher.player_id;
                     updatedPitcher.player_name = newPitcher.player_name;
-                    updatedPitcher.quality_starts = updatedPitcher.quality_starts * .5;
-                    updatedPitcher.runs_allowed = updatedPitcher.runs_allowed * .5;
+                    updatedPitcher.quality_starts = updatedPitcher.quality_starts * 3; 
+                    updatedPitcher.runs_allowed = updatedPitcher.runs_allowed //* .5;
                     updatedPitcher.season = updatedPitcher.season;
-                    updatedPitcher.shutouts = updatedPitcher.shutouts * .5;
-                    updatedPitcher.strikeouts = updatedPitcher.strikeouts * .5;
+                    updatedPitcher.shutouts = updatedPitcher.shutouts * 10;
+                    updatedPitcher.strikeouts = updatedPitcher.strikeouts * 1;  
                     updatedPitcher.team = newPitcher.team;
-                    updatedPitcher.walks = updatedPitcher.walks * .5;
-                    updatedPitcher.whip = updatedPitcher.whip * .5;
-                    updatedPitcher.win_pct = updatedPitcher.win_pct * .5;
-                    updatedPitcher.wins = updatedPitcher.wins * .5;
+                    updatedPitcher.walks = updatedPitcher.walks //* .5;
+                    updatedPitcher.whip = updatedPitcher.whip //* .5;
+                    updatedPitcher.win_pct = updatedPitcher.win_pct //* .5;
+                    updatedPitcher.wins = updatedPitcher.wins * 7;  
     
                     //push the new player object to the new array created above
                     pitchersThisWeek.push(updatedPitcher)
+                    // console.log("updatedPitcher: ", updatedPitcher)
                 }
              })
          })
-        
-        //find which users team each player is on push update player to new array
-        let updatedPitchers = [];
-        this.state.myTeams.map(team => {
-            team.pitchers.map(pitcher => {
-                // myTeamPitchersIds.push(pitcher.player_id)
-
-                pitchersThisWeek.map(thisPitcher => {
-
-                    //check if a player is in both the pithcersThisWeek array and the myTeams pitcher array
-                    //if so create a new team object that is identical to the one held in state, 
-                    //Except overwrite the players array with the updatedPlayers containing the matched players
-                    if (thisPitcher.player_id === pitcher.player_id) {
-                        updatedPitchers.push(thisPitcher)
-                    }
-                })
-            })
-        })
 
         //batters difference
         //set new array variable and loop through oldplayers first
@@ -243,7 +216,7 @@ class Home extends Component {
 
                     //iterate through object and subtract new stat values from old
                     let updatedBatter = Object.keys(oldBatter).reduce((a, i) => {
-                        a[i] = oldBatter[i] - newBatter[i];
+                        a[i] = newBatter[i] - oldBatter[i];
                         // a.player_id = newBatter.player_id;
                         // a.player_name = newBatter.player_name;
                         return a;
@@ -251,37 +224,37 @@ class Home extends Component {
                 
                     //set fantasy points: multiply updated stat values by point factor
                     //*IMPORTANT: need to re-set name and id to value of newBatter as the subtraction above returns NaN for any string values
-                    updatedBatter.appearances = updatedBatter.appearances * .5;
-                    updatedBatter.at_bats = updatedBatter.at_bats * .5;
-                    updatedBatter.at_bats_risp = updatedBatter.at_bats_risp * .5;
-                    updatedBatter.batting_average = updatedBatter.batting_average * .5;
-                    updatedBatter.batting_average_risp = updatedBatter.batting_average_risp * .5;
-                    updatedBatter.doubles = updatedBatter.doubles* .5;
-                    updatedBatter.first_appearance = updatedBatter.first_appearance * .5;
-                    updatedBatter.flyouts = updatedBatter.flyouts * .5;
-                    updatedBatter.gidps = updatedBatter.gidps * .5;
-                    updatedBatter.ground_outs = updatedBatter.ground_outs * .5;
-                    updatedBatter.hbps = updatedBatter.hbps * .5;
-                    updatedBatter.hits = updatedBatter.hits * .5;
-                    updatedBatter.hits_risps = updatedBatter.hits_risps * .5;
-                    updatedBatter.home_runs = updatedBatter.home_runs  * .5;
-                    updatedBatter.on_base_percentage = updatedBatter.on_base_percentage * .5;
-                    updatedBatter.on_base_slugging = updatedBatter.on_base_slugging * .5;
-                    updatedBatter.plate_appearances = updatedBatter.plate_appearances * .5;
+                    updatedBatter.appearances = updatedBatter.appearances //* .5;
+                    updatedBatter.at_bats = updatedBatter.at_bats //* .5;
+                    updatedBatter.at_bats_risp = updatedBatter.at_bats_risp //* .5;
+                    updatedBatter.batting_average = updatedBatter.batting_average //* .5;
+                    updatedBatter.batting_average_risp = updatedBatter.batting_average_risp //* .5;
+                    updatedBatter.doubles = updatedBatter.doubles * 2;
+                    updatedBatter.first_appearance = updatedBatter.first_appearance //* .5;
+                    updatedBatter.flyouts = updatedBatter.flyouts //* .5;
+                    updatedBatter.gidps = updatedBatter.gidps //* .5;
+                    updatedBatter.ground_outs = updatedBatter.ground_outs //* .5;
+                    updatedBatter.hbps = updatedBatter.hbps //* .5;
+                    updatedBatter.hits = updatedBatter.hits * 1 ;
+                    updatedBatter.hits_risps = updatedBatter.hits_risps //* .5;
+                    updatedBatter.home_runs = updatedBatter.home_runs  * 4; 
+                    updatedBatter.on_base_percentage = updatedBatter.on_base_percentage //* .5;
+                    updatedBatter.on_base_slugging = updatedBatter.on_base_slugging //* .5;
+                    updatedBatter.plate_appearances = updatedBatter.plate_appearances //* .5;
                     updatedBatter.player_id = newBatter.player_id;
                     updatedBatter.player_name = newBatter.player_name;
-                    updatedBatter.quadruples = updatedBatter.quadruples * .5;
-                    updatedBatter.runs_batted_in = updatedBatter.runs_batted_in * .5;
-                    updatedBatter.sacrifices = updatedBatter.sacrifices * .5;
-                    updatedBatter.sacrifices = updatedBatter.sacrifices * .5;
+                    updatedBatter.quadruples = updatedBatter.quadruples //* .5; 
+                    updatedBatter.runs_batted_in = updatedBatter.runs_batted_in * 1;  
+                    updatedBatter.strikeouts = updatedBatter.strikeouts //* .5;
+                    updatedBatter.sacrifices = updatedBatter.sacrifices //* .5;
                     updatedBatter.season =  newBatter.season;
-                    updatedBatter.singles = updatedBatter.singles * .5;
-                    updatedBatter.slugging = updatedBatter.slugging * .5;
+                    updatedBatter.singles = updatedBatter.singles * 1; 
+                    updatedBatter.slugging = updatedBatter.slugging //* .5;
                     updatedBatter.team = newBatter.team;
                     updatedBatter.team_id = newBatter.team_id;
-                    updatedBatter.total_bases = updatedBatter.total_bases * .5;
-                    updatedBatter.triples = updatedBatter.triples * .5;
-                    updatedBatter.walks = updatedBatter.walks * .5;
+                    updatedBatter.total_bases = updatedBatter.total_bases * 1; 
+                    updatedBatter.triples = updatedBatter.triples * 3; 
+                    updatedBatter.walks = updatedBatter.walks //* .5;
 
                     // console.log(" newBatter.player_id: ",  newBatter.player_id)
                     //push the new player object to the new array created above
@@ -292,23 +265,45 @@ class Home extends Component {
         
         //find which users team each player is on 
         //then create a duplicate team object with the new arrays of updated players
-        let updatedBatters = [];
+        //batters first this time
+        // let updatedTeamsList = [];
+        // let updatedTeam = {};
+        // this.state.teamsWithPoints.map(teamPoints => {
         let updatedTeamsList = [];
+        let updatedTeam = {};
         this.state.myTeams.map(team => {
+            let updatedBatters = [];
+            let updatedPitchers = [];
+
             team.batters.map(batter => {
 
-                battersThisWeek.map(thisbatter => {
-
-                    //check if a player is in both the pithcersThisWeek array and the myTeams batter array
+                battersThisWeek.map(thisBatter => {
+                   
+                    //check if a player is in both the plaeyrsThisWeek array and the myTeams player array
                     //if so create a new team object that is identical to the one heled in state, 
                     //Except overwrite the players array with the updatedPlayers containing the matched players
-                    if (thisbatter.player_id === batter.player_id) {
-                        updatedBatters.push(thisbatter)
+                    if (thisBatter.player_id === batter.player_id) {
+                        updatedBatters.push(thisBatter)
+                    }
+                })
+            })
+
+            team.pitchers.map(pitcher => {
+
+                pitchersThisWeek.map(thisPitcher => {
+                   
+                    //check if a player is in both the plaeyrsThisWeek array and the myTeams player array
+                    //if so create a new team object that is identical to the one heled in state, 
+                    //Except overwrite the players array with the updatedPlayers containing the matched players
+                    if (thisPitcher.player_id === pitcher.player_id) {
+                        updatedPitchers.push(thisPitcher)
 
                     }
                 })
             })
-            const updatedTeam = {
+
+            //create updated team object containing both the new updatedPitchers  and updatedBatters arrays
+            updatedTeam = {
                 teamId: team.teamId,
                 teamName: team.teamName,
                 userId: team.userId,
@@ -316,15 +311,14 @@ class Home extends Component {
                 batters: updatedBatters,
             }
 
-            // console.log("updatedTeam: ", updatedTeam)
-
             // then push the new object to a new array for updated teams
             // could then put a limit on returning only one team with the same id
             updatedTeamsList.push(updatedTeam)
         })
          // set the updated teams array as a new state which will be mapped over in the return method
         this.setState({teamsWithPoints: updatedTeamsList})
-        console.log("teamsWithPoints: ", this.state.teamsWithPoints)
+        // console.log("myTeams: ", this.state.myTeams)
+        // console.log("teamsWithPoints: ", this.state.teamsWithPoints)
      }
 
 
@@ -341,6 +335,10 @@ class Home extends Component {
         }
          return result;
         }
+
+     // repeat with the interval of 2 minutes
+    
+   
    
       // Thoughts on edit:
       // give the item being edited an id & pass it to edit button
@@ -380,11 +378,11 @@ class Home extends Component {
         // const myRosters = this.state.myRosters;
         // const user = fire.auth().currentUser;
 
-        if (!user) {
-            return (
-                <Login />
-            );
-        } 
+        // if (!user) {
+        //     return (
+        //         <Login />
+        //     );
+        // } 
         if (!myTeams.length) {
             return (
                 <div>
@@ -468,45 +466,48 @@ class Home extends Component {
                                     <th>
                                         POS
                                     </th>
-                                    <th>
+                                    {/* <th>
                                         G
-                                    </th>
+                                    </th> */}
                                     <th>
                                         W
                                     </th>
-                                    <th>
+                                    {/* <th>
                                         L
-                                    </th>
-                                    <th>
+                                    </th> */}
+                                    {/* <th>
                                         ERA
-                                    </th>
+                                    </th> */}
                                     <th>
                                         QS
                                     </th>
                                     <th>
+                                        IP
+                                    </th>
+                                    <th>
                                         SHO
                                     </th>
-                                    <th>
+                                    {/* <th>
                                         H
-                                    </th>
-                                    <th>
+                                    </th> */}
+                                    {/* <th>
                                         R
-                                    </th>
-                                    <th>
+                                    </th> */}
+                                    {/* <th>
                                         HR
-                                    </th>
+                                    </th> */}
                                     <th>
                                         O
                                     </th>
-                                    <th>
+                                    {/* <th>
                                         W
-                                    </th>
+                                    </th> */}
                                     <th>
                                         SO
                                     </th>
-                                    <th>
+                                    {/* <th>
                                         WHIP
-                                    </th>
+                                    </th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -514,19 +515,20 @@ class Home extends Component {
                                 <tr key={pitcher.id}>
                                     <td>{pitcher.player_name}</td> 
                                     <td>Pitcher</td>
-                                    <td>{pitcher.games}</td>
+                                    {/* <td>{pitcher.games}</td> */}
                                     <td>{pitcher.wins}</td>
-                                    <td>{pitcher.losses}</td>
-                                    <td>{pitcher.era}</td>
+                                    {/* <td>{pitcher.losses}</td> */}
+                                    {/* <td>{pitcher.era}</td> */}
                                     <td>{pitcher.quality_starts}</td> 
+                                    <td>{pitcher.innings}</td>
                                     <td>{pitcher.shutouts}</td>
-                                    <td>{pitcher.hits_allowed}</td>
-                                    <td>{pitcher.runs_allowed}</td>
-                                    <td>{pitcher.hrs_allowed}</td>
+                                    {/* <td>{pitcher.hits_allowed}</td> */}
+                                    {/* <td>{pitcher.runs_allowed}</td> */}
+                                    {/* <td>{pitcher.hrs_allowed}</td> */}
                                     <td>{pitcher.outs_recorded}</td>
-                                    <td>{pitcher.walks}</td> 
+                                    {/* <td>{pitcher.walks}</td>  */}
                                     <td>{pitcher.strikeouts}</td> 
-                                    <td>{pitcher.whip}</td> 
+                                    {/* <td>{pitcher.whip}</td>  */}
                                     {/* <td>{pitcher.team}</td>  */}
                                 </tr>
                                 ))}
@@ -543,12 +545,12 @@ class Home extends Component {
                             <th>
                                 POS
                             </th>
-                            <th>
+                            {/* <th>
                                 G
-                            </th>
-                            <th>
+                            </th> */}
+                            {/* <th>
                                 AB
-                            </th>
+                            </th> */}
                             <th>
                                 H
                             </th>
@@ -567,17 +569,20 @@ class Home extends Component {
                             <th>
                                 RBI
                             </th>
-                            <th>
+                            {/* <th>
                                 SO
-                            </th>
-                            <th>
+                            </th> */}
+                            {/* <th>
                                 SFC
-                            </th>
-                            <th>
+                            </th> */}
+                            {/* <th>
                                 AVG
-                            </th>
-                            <th>
+                            </th> */}
+                            {/* <th>
                                 OBP
+                            </th> */}
+                            <th>
+                                TB
                             </th>
                             </tr>
                         </thead>
@@ -586,18 +591,19 @@ class Home extends Component {
                             <tr key={batter.id}>
                                 <td>{batter.player_name}</td> 
                                 <td>Batter</td>
-                                <td>{batter.appearances}</td>
-                                <td>{batter.at_bats}</td>
+                                {/* <td>{batter.appearances}</td> */}
+                                {/* <td>{batter.at_bats}</td> */}
                                 <td>{batter.hits}</td>
                                 <td>{batter.singles}</td>
                                 <td>{batter.doubles}</td>
                                 <td>{batter.triples}</td>
                                 <td>{batter.home_runs}</td>
                                 <td>{batter.runs_batted_in}</td>
-                                <td>{batter.strikeouts}</td>
-                                <td>{batter.sacrifices}</td>
-                                <td>{batter.batting_average}</td>
-                                <td>{batter.on_base_percentage}</td>
+                                {/* <td>{batter.strikeouts}</td> */}
+                                {/* <td>{batter.sacrifices}</td> */}
+                                {/* <td>{batter.batting_average}</td> */}
+                                {/* <td>{batter.on_base_percentage}</td> */}
+                                <td>{batter.total_bases}</td>
                                 {/* <td>{batter.team}</td> */}
                             </tr>
                             ))}
