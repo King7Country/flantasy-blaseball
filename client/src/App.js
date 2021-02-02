@@ -6,9 +6,7 @@ import Login from "./components/Login/Login"
 import Home from "./components/Home/Home"
 import Standings from "./components/Standings/Standings"
 import TestDraft from "./components/TestDraft"
-import TestDraftBatters from "./components/TestDraftBatters"
 import Header from "./components/Header/Header"
-
 
 class App extends React.Component {
 

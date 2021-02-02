@@ -1,23 +1,23 @@
 import React, { Component } from 'react'
 import fire from '../../config/fire'
 import axios from "axios";
-import { Link } from 'react-router-dom';
 import "./Home.scss";
-import Login from "../Login/Login"
+
+const url = 'http://localhost:7877';
 
 class Home extends Component {
     state = {
-        user: undefined,
+        user: undefined, 
         userId: "loading",
         userName: "",
+        active: "--pitchers",
         myTeams: [],
-        origPitcherStats: [],
-        newPitcherStats: [],
-        origBatterStats: [],
-        newBatterStats: [], 
-        updatedPitchers: [],
+        origPitcherStats: [], //from db 
+        newPitcherStats: [],  //from API - current stats
+        origBatterStats: [],  //from db
+        newBatterStats: [],   //from API - current stats
 
-        teamsWithPoints: [],
+        teamsWithPoints: [],  //teams/players with calculated fantasy points to be rendered
     }
 
     componentDidMount() {
@@ -97,7 +97,7 @@ class Home extends Component {
 
              // make axios call to server with the string of id's as paramaters
             //  axios.get(`http://localhost:7777/pitchers-list/${pitcherIdString}`) //actual API
-             axios.get(`http://localhost:7777/simulated-pitchers/${pitcherIdString}`) //simulated API
+             axios.get(`${url}/simulated-pitchers/${pitcherIdString}`) //simulated API
               .then(res => {
                   this.setState({newPitcherStats: res.data});
                 //   console.log("newPitcherStats: ", this.state.newPitcherStats)
@@ -107,7 +107,7 @@ class Home extends Component {
               .catch(err => console.log("err: ", err))
 
             //   axios.get(`http://localhost:7777/batters-list/${batterIdString}`) //actual API
-              axios.get(`http://localhost:7777/simulated-batters/${batterIdString}`) //simulated API
+              axios.get(`${url}/simulated-batters/${batterIdString}`) //simulated API
                 .then(res => {
                     return this.setState({newBatterStats: res.data});
                     // this.determinePitcherPoints(this.state.origBatterStats, this.state.newBatterStats)
@@ -341,9 +341,6 @@ class Home extends Component {
          return result;
         }
 
-     // repeat with the interval of 2 minutes
-    
-   
    
       // Thoughts on edit:
       // give the item being edited an id & pass it to edit button
@@ -361,6 +358,14 @@ class Home extends Component {
       //                                  }   
       //                  }
 
+    handleTab(event) {
+        if (this.state.active === "--pitchers" && event.target.value === "batters-tab") {
+          this.setState({active: "--batters"})
+        } else if (this.state.active === "--batters" && event.target.value === "pitchers-tab") {
+          this.setState({active: "--pitchers"})
+        }
+    }
+
     logout() {
         this.props.history.push("/login");
         fire.auth().signOut();
@@ -374,7 +379,7 @@ class Home extends Component {
         const teamsWithPoints = this.state.teamsWithPoints
         // const myRosters = this.state.myRosters;
         // const user = fire.auth().currentUser;
-        // console.log("userName", userName)
+        console.log("myTeams", myTeams)
 
         if (!user) {
             return (
@@ -385,21 +390,6 @@ class Home extends Component {
             return (
                 <div class="user">
                     <h1 className="user__username">{userName}</h1>
-                    {/* <button
-                        onClick={() => this.logout(this.props)}
-                        >
-                        Logout
-                    </button>
-                    <Link to={`/user/`}>My Team</Link>
-                    <br/>
-                    <Link to="/testdraft">Test Draft</Link>
-                    <br/>
-                    <Link to={`/standings`}>Standings</Link>
-                    <br/>
-                    <Link to={`/login`}>Log in</Link> */}
-                
-                    {/* <h4>email: </h4>
-                    <p>{this.state.userEmail}</p> */}
                     <h3 className="user__teams-header">My Teams</h3>
                     <div className="user__no-team">
                         <p>You don't have a flantasy blaseball team yet, why not draft one now?</p>
@@ -414,46 +404,52 @@ class Home extends Component {
 
         return (
             
-            <div>
-                <h1>Home</h1>
-                {/* <button
-                     onClick={() => this.logout()}
-                    >
-                    Logout
-                </button> 
-                <br/>
-                <Link to={`/user/`}>My Team</Link>
-                <br/>
-                <Link to={"/tesDraft"}>Test Draft</Link>
-                <br/>
-                <Link to={`/standings`}>Standings</Link>
-                <br/>
-                <Link to={`/login`}>Log in</Link> */}
+            <div className="user">
+                
+                <div className="user__sub-container">
+                    <h1 className="user__username">{userName}</h1>
+                    <button 
+                        className="user__logout"
+                        onClick={() => this.logout()}
+                        >
+                        Logout
+                    </button>
+                </div>
 
-                <h1>{userName}</h1>
-
-                <h3>My Teams</h3>
-                <div>
+                <h3 className="user__my-teams">My Teams</h3>
+                <div className="user__table-container">
                 {teamsWithPoints.map(team => {
                     return (
                       <>
-                        <p><strong>Team Name: </strong> {team.teamName}</p>
-                        <p><strong>Team Roster:</strong> </p>
+                        <p className="user__team-name"> {team.teamName}</p>
 
-                        <table>
-                            <caption>Pitchers</caption>
-                            <thead>
-                                <tr>
-                                    <th>
+                        <div className="user__tab-container">
+                            <button
+                                className={`user__tab-buttons${this.state.active === "--pitchers" ? '--pitcher' : ""}`}
+                                value="pitchers-tab"
+                                onClick={event => this.handleTab(event, this.state.active)}
+                                >Pitchers
+                            </button>
+                            <button
+                                className={`user__tab-buttons${this.state.active === "--batters" ? '--batter' : ""}`}
+                                value="batters-tab"
+                                onClick={event => this.handleTab(event, this.state.active)}
+                                >Batters
+                            </button>
+                        </div>
+                        <table 
+                            className={`user__tab${this.state.active === "--pitchers" ? '--pitcher' : ""}`}>
+                            <thead className="user__head">
+                                <tr className="user__row--head">
+                                    <th className="user__head-items--name">
                                         Name
-                                    </th>
-                                    <th>
-                                        POS
                                     </th>
                                     {/* <th>
                                         G
                                     </th> */}
-                                    <th>
+                                    <th 
+                                        data-tooltip="Wins" 
+                                        className="user__head-items">
                                         W
                                     </th>
                                     {/* <th>
@@ -462,14 +458,20 @@ class Home extends Component {
                                     {/* <th>
                                         ERA
                                     </th> */}
-                                    <th>
+                                    <th 
+                                        data-tooltip="Quality Starts"
+                                        className="user__head-items">
                                         QS
                                     </th>
-                                    <th>
+                                    <th 
+                                        data-tooltip="Innings Pitched"
+                                        className="user__head-items">
                                         IP
                                     </th>
-                                    <th>
-                                        SHO
+                                    <th 
+                                        data-tooltip="Shutouts"
+                                        className="user__head-items">
+                                        SH
                                     </th>
                                     {/* <th>
                                         H
@@ -480,13 +482,17 @@ class Home extends Component {
                                     {/* <th>
                                         HR
                                     </th> */}
-                                    <th>
+                                    <th
+                                        data-tooltip="Outs Recorded"
+                                        className="user__head-items">
                                         O
                                     </th>
                                     {/* <th>
                                         W
                                     </th> */}
-                                    <th>
+                                    <th
+                                        data-tooltip="Strikeouts"
+                                        className="user__head-items">
                                         SO
                                     </th>
                                     {/* <th>
@@ -494,24 +500,25 @@ class Home extends Component {
                                     </th> */}
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="user__body">
                                 {team.pitchers.map(pitcher => (
-                                <tr key={pitcher.id}>
-                                    <td>{pitcher.player_name}</td> 
-                                    <td>Pitcher</td>
+                                <tr 
+                                    className="user__row"
+                                    key={pitcher.id}>
+                                    <td className="user__row-items--name">{pitcher.player_name}</td> 
                                     {/* <td>{pitcher.games}</td> */}
-                                    <td>{pitcher.wins}</td>
+                                    <td className="user__row-items">{pitcher.wins}</td>
                                     {/* <td>{pitcher.losses}</td> */}
                                     {/* <td>{pitcher.era}</td> */}
-                                    <td>{pitcher.quality_starts}</td> 
-                                    <td>{pitcher.innings}</td>
-                                    <td>{pitcher.shutouts}</td>
+                                    <td className="user__row-items">{pitcher.quality_starts}</td> 
+                                    <td className="user__row-items">{pitcher.innings}</td>
+                                    <td className="user__row-items">{pitcher.shutouts}</td>
                                     {/* <td>{pitcher.hits_allowed}</td> */}
                                     {/* <td>{pitcher.runs_allowed}</td> */}
                                     {/* <td>{pitcher.hrs_allowed}</td> */}
-                                    <td>{pitcher.outs_recorded}</td>
+                                    <td className="user__row-items">{pitcher.outs_recorded}</td>
                                     {/* <td>{pitcher.walks}</td>  */}
-                                    <td>{pitcher.strikeouts}</td> 
+                                    <td className="user__row-items">{pitcher.strikeouts}</td> 
                                     {/* <td>{pitcher.whip}</td>  */}
                                     {/* <td>{pitcher.team}</td>  */}
                                 </tr>
@@ -519,75 +526,87 @@ class Home extends Component {
                             </tbody>
                         </table>
       
-                        <table>
-                        <caption>Batters Available</caption>
-                        <thead>
+                        <table className={`user__tab${this.state.active === "--batters" ? '--batter' : ""}`}>
+                        <thead className="user__head">
                             <tr>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                POS
-                            </th>
-                            {/* <th>
-                                G
-                            </th> */}
-                            {/* <th>
-                                AB
-                            </th> */}
-                            <th>
-                                H
-                            </th>
-                            <th>
-                                1B
-                            </th>
-                            <th>
-                                2B
-                            </th>
-                            <th>
-                                3B
-                            </th>
-                            <th>
-                                HR
-                            </th>
-                            <th>
-                                RBI
-                            </th>
-                            {/* <th>
-                                SO
-                            </th> */}
-                            {/* <th>
-                                SFC
-                            </th> */}
-                            {/* <th>
-                                AVG
-                            </th> */}
-                            {/* <th>
-                                OBP
-                            </th> */}
-                            <th>
-                                TB
-                            </th>
+                                <th className="user__head-items--name">
+                                    Name
+                                </th>
+                              
+                                {/* <th>
+                                    G
+                                </th> */}
+                                {/* <th>
+                                    AB
+                                </th> */}
+                                <th
+                                    data-tooltip="Hits"
+                                    className="user__head-items--tooltip">
+                                    H
+                                </th>
+                                <th
+                                    data-tooltip="Singles"
+                                    className="user__head-items--tooltip">
+                                    1B
+                                </th>
+                                <th
+                                    data-tooltip="Doubles"
+                                    className="user__head-items--tooltip">
+                                    2B
+                                </th>
+                                <th
+                                    data-tooltip="Triples"
+                                    className="user__head-items--tooltip">
+                                    3B
+                                </th>
+                                <th
+                                    data-tooltip="Home Runs"
+                                    className="user__head-items--tooltip">
+                                    HR
+                                </th>
+                                <th
+                                    data-tooltip="Runs Batted In"
+                                    className="user__head-items--tooltip">
+                                    RBI
+                                </th>
+                                {/* <th>
+                                    SO
+                                </th> */}
+                                {/* <th>
+                                    SFC
+                                </th> */}
+                                {/* <th>
+                                    AVG
+                                </th> */}
+                                {/* <th>
+                                    OBP
+                                </th> */}
+                                <th
+                                    data-tooltip="Total Bases"
+                                    className="user__head-items--tooltip">
+                                    TB
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="user__body">
                             {team.batters.map(batter => (
-                            <tr key={batter.id}>
-                                <td>{batter.player_name}</td> 
-                                <td>Batter</td>
+                            <tr 
+                                className="user__row"
+                                key={batter.id}>
+                                <td className="user__row-items--name">{batter.player_name}</td> 
                                 {/* <td>{batter.appearances}</td> */}
                                 {/* <td>{batter.at_bats}</td> */}
-                                <td>{batter.hits}</td>
-                                <td>{batter.singles}</td>
-                                <td>{batter.doubles}</td>
-                                <td>{batter.triples}</td>
-                                <td>{batter.home_runs}</td>
-                                <td>{batter.runs_batted_in}</td>
+                                <td className="user__row-items">{batter.hits}</td>
+                                <td className="user__row-items">{batter.singles}</td>
+                                <td className="user__row-items">{batter.doubles}</td>
+                                <td className="user__row-items">{batter.triples}</td>
+                                <td className="user__row-items">{batter.home_runs}</td>
+                                <td className="user__row-items">{batter.runs_batted_in}</td>
                                 {/* <td>{batter.strikeouts}</td> */}
                                 {/* <td>{batter.sacrifices}</td> */}
                                 {/* <td>{batter.batting_average}</td> */}
                                 {/* <td>{batter.on_base_percentage}</td> */}
-                                <td>{batter.total_bases}</td>
+                                <td className="user__row-items">{batter.total_bases}</td>
                                 {/* <td>{batter.team}</td> */}
                             </tr>
                             ))}

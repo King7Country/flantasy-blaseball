@@ -15,7 +15,7 @@ class NameModal extends React.Component {
 
         render() {
             
-            if (this.props.showModal) {
+            if (this.props.modalTeamName) {
                 return (
                     <div className="modal">
                 

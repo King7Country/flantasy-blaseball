@@ -3,8 +3,9 @@ import axios from "axios"
 import fire from "../config/fire";
 import { v4 as uuidv4 } from 'uuid';
 import NameModal from '../components/NameModal/NameModal'
+import DraftModal from '../components/DraftModal/DraftModal'
+
 import "./TestDraft.scss"
-import Login from "../components/Login/Login"
 
 // import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
@@ -21,13 +22,7 @@ import Login from "../components/Login/Login"
 // const API_PLAYERS = 'https://www.blaseball.com/database/players?ids='
 
 
-// the API docs: https://api.blaseball-reference.com/docs#/
-const URL = 'https://api.blaseball-reference.com/v1';
-const ALL_PLAYERS = `${URL}/allPlayers?includeShadows=false`; // no shadows
-const PLAYER_STATS = `${URL}playerStats?category=` // takes in ${statType}&${playerId} to complete the url
-const PITCHING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?category=pitching&playerIds=';
-const BATTING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?category=batting&playerIds=';
-let statType;
+const URL = 'http://localhost:7877';
 
 class TestDraft extends React.Component {
 
@@ -36,7 +31,8 @@ class TestDraft extends React.Component {
     pitchingStats: [],
     battingStats: [],
    
-    showModal: true,
+    modalTeamName: true, //boolean display so user can chose team name
+    modalMessage: false, //set as a string to display if any errors 
     teamName: "",
     active: "--pitchers",
     draftedPitchers: [],
@@ -44,12 +40,12 @@ class TestDraft extends React.Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:7777/pitchers')
+    axios.get(`http://localhost:7877/pitchers`)
     .then(res => {
       this.setState({pitchingStats: res.data})
     })
     .catch(err => console.log("err pitch: ", err));
-    axios.get('http://localhost:7777/batters')
+    axios.get(`http://localhost:7877/batters`)
     .then(res => {
       console.log("res: ", res)
       this.setState({battingStats: res.data})
@@ -67,8 +63,8 @@ class TestDraft extends React.Component {
   }
 
   handleCloseModal = (event) => {
-    this.setState({showModal: false})
-    console.log("showModal: ", this.state.showModal)
+    this.setState({modalTeamName: false})
+    this.setState({modalMessage: false})
   }
 
   handleTab(event) {
@@ -84,9 +80,9 @@ class TestDraft extends React.Component {
     const totalPlayers = this.state.draftedPitchers.length + this.state.draftedBatters.length;
 
     // check if total players is less then max amount
-    if (totalPlayers < 9) {
+    if (totalPlayers < 12) {
       //check if pitcher and update the draftedPitcher and pitchingStats states
-      if (event.target.value === "draftPitcher") {
+      if (event.target.value === "draftPitcher" && this.state.draftedPitchers.length < 3) {
         // init array, push to array, set state: new array
         let draftedPitchersList = this.state.draftedPitchers.slice();
         draftedPitchersList.unshift(draftedPlayer);
@@ -101,7 +97,7 @@ class TestDraft extends React.Component {
         // console.log("updated state: ",updatedPitchingStats)
       }
       //check if batter and update the draftedBatter and battingStats states
-      else if (event.target.value === "draftBatter") {
+      else if (event.target.value === "draftBatter" && this.state.draftedBatters.length < 9) {
         console.log("batter - draftPlayer: ", draftedPlayer)
         // init array, push to array, set state: array
         let draftedBattersList = this.state.draftedBatters.slice();
@@ -118,33 +114,41 @@ class TestDraft extends React.Component {
         this.setState({battingStats: updatedBattingStats})
         console.log("updated batting state: ", this.state.battingStats)
       }
-    } else {
-      return alert("max number of players already selected", "Don't forget to turn this into some kind of modal")
-    }    
+    }
+    //if already selected max number of players for that position, let them know
+    if (event.target.value === "draftPitcher" && this.state.draftedPitchers.length === 3) {
+
+      this.setState({modalMessage: "You've already drafted the max number of players for that position."})
+    } else if (event.target.value === "draftBatter" && this.state.draftedBatters.length === 9) {
+    //if already selected max number of players for that position, let them know
+      this.setState({modalMessage: "You've already drafted the max number of players for that position."})
+    }
   }
 
   finishDraft(state) {
     const totalPlayers = this.state.draftedPitchers.length + this.state.draftedBatters.length;
 
-    let teamName = this.state.teamName;
-    const userId = fire.auth().currentUser.uid;
-    let teamId = uuidv4();
-    let newTeam = {
-      userId: userId,
-      teamId: teamId,
-      teamName: teamName,
-      pitchers: state.draftedPitchers,
-      batters: state.draftedBatters,
+    if (totalPlayers === 12) {
+
+      let teamName = this.state.teamName;
+      const userId = fire.auth().currentUser.uid;
+      let teamId = uuidv4();
+      let newTeam = {
+        userId: userId,  
+        teamId: teamId,
+        teamName: teamName,
+        pitchers: state.draftedPitchers,
+        batters: state.draftedBatters,
+      }
+      
+        fire.database().ref('teams').push(newTeam);
+  
+        // show completion message
+        this.setState({modalMessage: `Congratulations! The draft is complete, you can safely return to low pressure situations.`});
     }
 
-    
-      fire.database().ref('teams').push(newTeam);
-
-      // show finished message with link to teams.  empty fields?
-      alert("show finished message with link to users teams page")
-   if (totalPlayers < 9) {
-      return alert("You've only selected " + totalPlayers +  " players, select a few more players until you have 9 on your team.", "Don't forget to turn this into some kind of modal")
-
+   if (totalPlayers < 12) {
+    this.setState({modalMessage: `You've only selected ${totalPlayers} players, select a few more players until you have 12 on your team.`});
     }
   
   }
@@ -160,17 +164,12 @@ class TestDraft extends React.Component {
     console.log("battingStats: ", battingStats)
     console.log("pitchingStats: ", pitchingStats)
     console.log("combined: ", pitchingStats.length + battingStats.length)
+    console.log("this.state.modalMessage: ", this.state.modalMessage)
 
-
-    // if (!user) {
-    //     return (
-    //         <Login />
-    //     );
-    // } 
-     if (this.state.showModal) {
+     if (this.state.modalTeamName) {
       return (
         <NameModal 
-          showModal={this.state.showModal} 
+          modalTeamName={this.state.modalTeamName} 
           value={this.state.teamName} 
           onChange={this.handleTeamName} 
           onClick={this.handleCloseModal} />
@@ -180,6 +179,7 @@ class TestDraft extends React.Component {
       return (
         <div
           style={{
+            marginTop: "10em",
             width: "100%",
             height: "100%",
             display: "flex",
@@ -190,15 +190,26 @@ class TestDraft extends React.Component {
         </div>
       );
     }
+    if (this.state.modalMessage) {
+      return (
+        <DraftModal 
+          modalMessage={this.state.modalMessage} 
+          onClick={this.handleCloseModal} />
+      )
+    }
 
     return (
       <div className="draft__container">
-        <h2 className="heading">Draft</h2>
+        <h2 className="draft__heading">Draft</h2>
 
-        <h2 className="draft__team-name">{this.state.teamName}</h2>
+        <div className="draft__selected-sub-container">
+          <h2 className="draft__team-name">{this.state.teamName}</h2>
+          <caption className="draft__table-heading--selected">Selected Players</caption>
+        </div>
+       
+
         <div className="draft__selected">
           <table className="draft__selected-table">
-          <caption className="draft__table-heading">Selected Playters</caption>
             <thead className="draft__head">
               <tr className="draft__row--head">
                 <th className="draft__head-items">

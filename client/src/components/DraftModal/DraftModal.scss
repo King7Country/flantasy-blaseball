@@ -19,14 +19,10 @@
         border: 2px solid rgba(117, 117, 117, 0.5);
     }
 
-    &__input {
-        width: 76%;
-        margin: .5em;
+    &__text {
         padding: 1em;
-        height: 3em;
         font-size: 1rem;
-        border: 2px solid rgb(66, 66, 66); ; 
-        border-radius: .25em;
+        text-align: center;
     }
 
     &__button {
