@@ -20,6 +20,12 @@ body {
 
 html {
     font-family: $global-fonts;
+    color: $global-text;
+}
+
+
+table {
+    border-collapse: collapse;
 }
 
 li {

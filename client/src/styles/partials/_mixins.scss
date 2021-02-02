@@ -11,6 +11,14 @@
 // MEDIA QUERRIES
 //
 
+@mixin medium {
+  @media screen and (min-width: $medium-breakpoint) {
+    @content;
+  }
+};
+
+$medium-breakpoint: 499px;
+
 @mixin tablet {
     @media screen and (min-width: $tablet-breakpoint) {
       @content;

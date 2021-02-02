@@ -7,32 +7,36 @@ import Home from "./components/Home/Home"
 import Standings from "./components/Standings/Standings"
 import TestDraft from "./components/TestDraft"
 import TestDraftBatters from "./components/TestDraftBatters"
-// import Header from "./components/Header/Header"
+import Header from "./components/Header/Header"
 
 
 class App extends React.Component {
 
   state = {
     user: "",
-    isAuthenticated: false
+    isAuthenticated: false,
+    authListenerAdded: false,
   }
 
   componentDidMount() {
-     this.authListener();
+    const authListenerAdded = this.state.authListenerAdded;
+    if (!authListenerAdded) {
+      this.authListener();
+    }
   }
 
   authListener() {
     fire.auth().onAuthStateChanged((user) => {
-      console.log(user.uid)
       if (user) {
         this.setState({ user: user })
         this.setState({ isAuthenticated: true })
-        // localStorage.setItem('isAuthenticated', user.uid)
+        localStorage.setItem('isAuthenticated', "true")
       } else {
         this.setState({ user: null })
-        this.setState({ isAuthenticated: false })
+        localStorage.removeItem("isAuthenticated")
       }
     })
+    this.setState({authListenerAdded: true})
   }
 
   render() {
@@ -45,18 +49,18 @@ class App extends React.Component {
     return (
 
       <Router>
-
+  
+        <Header user={user} />
         <Switch>
-          <PrivateRoute path="/" exact component={(routerProps) => <Home {...routerProps} user={user} />} />
           <Route path="/login" render={(routerProps) => <Login {...routerProps} user={user} />} />
+
+          <PrivateRoute path="/" exact component={(routerProps) => <Home {...routerProps} user={user} />} />
 
           <PrivateRoute path="/standings" exact component={(routerProps) => <Standings {...routerProps} user={user} />} />
           {/* <Route path="/login" component={Login} /> */}
           {/* <Route path="/playerlist" component={PlayerList} /> */}
           <PrivateRoute path="/testdraft" exact component={TestDraft} />
-          <PrivateRoute path="/testdraftbatters" component={TestDraftBatters} />
 
-          <Route path="/home" component={Home} />
         </Switch>
 
       </Router>

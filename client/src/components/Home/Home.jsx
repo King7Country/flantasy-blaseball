@@ -7,8 +7,9 @@ import Login from "../Login/Login"
 
 class Home extends Component {
     state = {
+        user: undefined,
         userId: "loading",
-        userEmail: "",
+        userName: "",
         myTeams: [],
         origPitcherStats: [],
         newPitcherStats: [],
@@ -20,38 +21,42 @@ class Home extends Component {
     }
 
     componentDidMount() {
-        // console.log("props: ", user).uid;
-        // const userId = this.state.userId;
         this.authListener();
     }
 
     authListener() {
         fire.auth().onAuthStateChanged((user) => {
-          const userId = user.uid;
-            this.setState({ userId: user.uid })
-            this.setState({ userEmail: user.email})
-            this.getTeams(); 
+            if (user) {
+                // const userId = user.uid;
+                this.setState({ userId: user.uid })
+                this.setState({ userName: user.displayName })
+                this.getTeams();
+            } else {
+                this.setState({user});                
+            }
         })
       }
 
     getTeams() {
-        const userId = this.state.userId
-        const teamsRef = fire.database().ref(`teams`);
-        teamsRef.orderByChild("userId").equalTo(userId).once('value', (snapshot) => {
-            let usersTeams = [];
-            snapshot.forEach((childSnapshot) => {
-                const childData = childSnapshot.val();
-                usersTeams.push(childData)
-                if (usersTeams.length >= 1 ) {
-                    this.setState({userAtTeamLimit: true})
-                }
-            });
-           return this.setState({myTeams: usersTeams})
-            
-        })
-        .then(() => {
-            this.getNewPlayerStats();
-        })
+        // if (user) {
+            const userId = this.state.userId;
+            const teamsRef = fire.database().ref(`teams`);
+            teamsRef.orderByChild("userId").equalTo(userId).once('value', (snapshot) => {
+
+                let usersTeams = [];
+                snapshot.forEach((childSnapshot) => {
+
+                    const childData = childSnapshot.val();
+                    usersTeams.push(childData)
+                });
+                this.setState({myTeams: usersTeams})
+
+            })
+            .then(() => {
+                this.getNewPlayerStats();
+            })
+        // }
+ 
     }
 
     //loops through myTeams once to get both pitchers and batters
@@ -357,66 +362,52 @@ class Home extends Component {
       //                  }
 
     logout() {
-        // console.log(userId)
-        fire.auth().signOut()
-            .then(() => {
-                console.log("logged out")
-                this.props.history.push("/login")
-            })
-            .catch(err => console.log("log out err: ", err))
-        // this.history.push("/login");
+        this.props.history.push("/login");
+        fire.auth().signOut();
     }
 
     render() {
 
-   
-
         const user = fire.auth().currentUser;
         const myTeams = this.state.myTeams;
-        const pitchersThisWeek = this.state.pitchersThisWeek;
+        const userName = this.state.userName;
         const teamsWithPoints = this.state.teamsWithPoints
         // const myRosters = this.state.myRosters;
         // const user = fire.auth().currentUser;
+        // console.log("userName", userName)
 
-        // if (!user) {
-        //     return (
-        //         <Login />
-        //     );
-        // } 
+        if (!user) {
+            return (
+                <div></div>
+            );
+        } 
         if (!myTeams.length) {
             return (
-                <div>
-                    <h1>Home</h1>
-                    <button
-                        onClick={this.logout}
+                <div class="user">
+                    <h1 className="user__username">{userName}</h1>
+                    {/* <button
+                        onClick={() => this.logout(this.props)}
                         >
                         Logout
                     </button>
-                    <br/>
                     <Link to={`/user/`}>My Team</Link>
                     <br/>
                     <Link to="/testdraft">Test Draft</Link>
                     <br/>
                     <Link to={`/standings`}>Standings</Link>
                     <br/>
-                    <Link to={`/login`}>Log in</Link>
-
-                    <br/>
+                    <Link to={`/login`}>Log in</Link> */}
                 
-                    <h4>uid: </h4>
-                    <p>{this.state.userId}</p>
-                    <h4>email: </h4>
-                    <p>{this.state.userEmail}</p>
-
-                    <h3>My Teams</h3>
-                    <br/>
-                    <p>You don't have a flantasy blaseball team yet, why not draft one now?</p>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <p>I'm serious, draft one right now!</p>
-
+                    {/* <h4>email: </h4>
+                    <p>{this.state.userEmail}</p> */}
+                    <h3 className="user__teams-header">My Teams</h3>
+                    <div className="user__no-team">
+                        <p>You don't have a flantasy blaseball team yet, why not draft one now?</p>
+                        <div className="user__no-team--sub">
+                            <p>I'm serious, draft one.</p>
+                            <p>Right now!</p>
+                        </div>
+                    </div>
                 </div>
             )
         }
@@ -425,8 +416,8 @@ class Home extends Component {
             
             <div>
                 <h1>Home</h1>
-                <button
-                    onClick={this.logout}
+                {/* <button
+                     onClick={() => this.logout()}
                     >
                     Logout
                 </button> 
@@ -437,18 +428,11 @@ class Home extends Component {
                 <br/>
                 <Link to={`/standings`}>Standings</Link>
                 <br/>
-                <Link to={`/login`}>Log in</Link>
+                <Link to={`/login`}>Log in</Link> */}
 
-                <br/>
-            
-
-                <h4>uid: </h4>
-                <p>{this.state.userId}</p>
-                <h4>email: </h4>
-                <p>{this.state.userEmail}</p>
+                <h1>{userName}</h1>
 
                 <h3>My Teams</h3>
-                <br/>
                 <div>
                 {teamsWithPoints.map(team => {
                     return (
@@ -615,15 +599,6 @@ class Home extends Component {
                 })}
 
                 </div>
-             
-               
-
-                <br/>
-                <br/>
-                <br/>
-
-               
-
             </div>
            
         )

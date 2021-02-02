@@ -137,12 +137,12 @@ class TestDraft extends React.Component {
       batters: state.draftedBatters,
     }
 
-    if (totalPlayers = 9) {
+    
       fire.database().ref('teams').push(newTeam);
 
       // show finished message with link to teams.  empty fields?
       alert("show finished message with link to users teams page")
-    } else if (totalPlayers < 9) {
+   if (totalPlayers < 9) {
       return alert("You've only selected " + totalPlayers +  " players, select a few more players until you have 9 on your team.", "Don't forget to turn this into some kind of modal")
 
     }
@@ -192,246 +192,246 @@ class TestDraft extends React.Component {
     }
 
     return (
-      <div>
-        <br/>
-        <h2 className="heading">Test Draft</h2>
+      <div className="draft__container">
+        <h2 className="heading">Draft</h2>
 
-        <table>
-          <caption>{this.state.teamName}</caption>
-          <thead>
-            <tr>
-              <th>
-                  Name
-              </th>
-              <th>
-                  POS
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-          {draftedPitchers.map(pitcher => (
-              <tr key={pitcher.id}>
-                <td>{pitcher.player_name}</td> 
-                <td>Pitcher</td>
-                <td>
-     
-                </td>
+        <h2 className="draft__team-name">{this.state.teamName}</h2>
+        <div className="draft__selected">
+          <table className="draft__selected-table">
+          <caption className="draft__table-heading">Selected Playters</caption>
+            <thead className="draft__head">
+              <tr className="draft__row--head">
+                <th className="draft__head-items">
+                    Name
+                </th>
+                <th className="draft__head-items">
+                    POS
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <table>
-        <thead>
-            <tr>
-              <th>
-                  Name
-              </th>
-              <th>
-                  POS
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-          {draftedBatters.map(batter => (
-              <tr key={batter.id}>
-                <td>{batter.player_name}</td> 
-                <td>Batter</td>
-                <td>
-     
-                </td>
-              </tr>
-            ))}
-          </tbody>
+            </thead>
+            <tbody className="draft__body">
+            {draftedPitchers.map(pitcher => (
+                <tr 
+                  className="draft__row" 
+                  key={pitcher.id}>
+                  <td className="draft__row-items--selected">{pitcher.player_name}</td> 
+                  <td className="draft__row-items--selected">Pitcher</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
 
-        <br/>
+          <table className="draft__selected-table">
+            {/* <thead className="draft__head">
+              <tr className="draft__row--head">
+                <th className="draft__head-items">
+                    Name
+                </th>
+                <th className="draft__head-items">
+                    POS
+                </th>
+              </tr>
+            </thead> */}
+            <tbody className="draft__body">
+            {draftedBatters.map(batter => (
+                <tr 
+                  className="draft__row" 
+                  key={batter.id}>
+                  <td className="draft__row-items--selected">{batter.player_name}</td> 
+                  <td className="draft__row-items--selected">Batter</td>
+                </tr>
+              ))}
+            </tbody>
+            </table>
+          </div>
 
         <button 
-          className="modal__button"
+          className="draft__buttons--finish"
           onClick={() => this.finishDraft(this.state)}
           >
           Finish Draft
         </button>
-        <br/>
-        <br/>
 
-        <button
-          value="pitchers-tab"
-          onClick={event => this.handleTab(event, this.state.active)}
-          >Pitchers
-        </button>
-        <button
-          value="batters-tab"
-          onClick={event => this.handleTab(event, this.state.active)}
-          >Batters
-        </button>
+        <div className="draft__tab-container">
+          <button
+            className={`draft__tab-buttons${this.state.active === "--pitchers" ? '--pitcher' : ""}`}
+            value="pitchers-tab"
+            onClick={event => this.handleTab(event, this.state.active)}
+            >Pitchers
+          </button>
+          <button
+            className={`draft__tab-buttons${this.state.active === "--batters" ? '--batter' : ""}`}
+            value="batters-tab"
+            onClick={event => this.handleTab(event, this.state.active)}
+            >Batters
+          </button>
+        </div>
 
-        <table className={`tab${this.state.active === "--pitchers" ? '--pitcher' : ""}`}>
-          <caption>Pitchers Available</caption>
-          <thead>
-            <tr>
-              <th>
-                Name
-              </th>
-              <th>
-                POS
-              </th>
-              <th>
-                G
-              </th>
-              <th>
-                W
-              </th>
-              <th>
-                L
-              </th>
-              <th>
-                ERA
-              </th>
-              <th>
-                QS
-              </th>
-              <th>
-                SHO
-              </th>
-              <th>
-                H
-              </th>
-              <th>
-                R
-              </th>
-              <th>
-                HR
-              </th>
-              <th>
-                O
-              </th>
-              <th>
-                W
-              </th>
-              <th>
-                SO
-              </th>
-              <th>
-                WHIP
-              </th>
-              <th>
-                Draft
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {pitchingStats.map(pitchingStats => (
-              <tr key={pitchingStats.id}>
-                <td>{pitchingStats.player_name}</td> 
-                <td>Pitcher</td>
-                <td>{pitchingStats.games}</td>
-                <td>{pitchingStats.wins}</td>
-                <td>{pitchingStats.losses}</td>
-                <td>{pitchingStats.era}</td>
-                <td>{pitchingStats.quality_starts}</td> 
-                <td>{pitchingStats.shutouts}</td>
-                <td>{pitchingStats.hits_allowed}</td>
-                <td>{pitchingStats.runs_allowed}</td>
-                <td>{pitchingStats.hrs_allowed}</td>
-                <td>{pitchingStats.outs_recorded}</td>
-                <td>{pitchingStats.walks}</td> 
-                <td>{pitchingStats.strikeouts}</td> 
-                <td>{pitchingStats.whip}</td> 
-                <td>
-                  <button 
-                    className="draft"
-                    value="draftPitcher"
-                    onClick={event => this.handleDraftedPlayer(event, pitchingStats)}
-                      >
-                      Draft
-                  </button>
-                </td>
+        <div className="draft__table-container">
+          <table 
+            className={`draft__tab${this.state.active === "--pitchers" ? '--pitcher' : ""}`}
+            >
+            {/* <caption className="draft__table-heading">Pitchers Available</caption> */}
+            <thead className="draft__head">
+              <tr className="draft__row--head">
+                <th className="draft__head-items--name">Name</th>
+                {/* <th className="draft__head-items">POS</th> */}
+                <th 
+                  data-tooltip="Games Played"
+                  className="draft__head-items--tooltip">G</th>
+                <th 
+                  data-tooltip="Wins"
+                  className="draft__head-items--tooltip">W</th>
+                <th 
+                  data-tooltip="Losses"
+                  className="draft__head-items--tooltip">L</th>
+                <th 
+                  data-tooltip="Earned Runs Average"
+                  className="draft__head-items--tooltip">ERA</th>
+                <th 
+                  data-tooltip="Quality Starts"
+                  className="draft__head-items--tooltip">QS</th>
+                <th 
+                  data-tooltip="Shutouts"
+                  className="draft__head-items--tooltip">SH</th>
+                <th 
+                  data-tooltip="Hits Allowed"
+                  className="draft__head-items--tooltip">H</th>
+                <th 
+                  data-tooltip="Runs Allowed"
+                  className="draft__head-items--tooltip">R</th>
+                <th 
+                  data-tooltip="Home Runs Allowed"
+                  className="draft__head-items--tooltip">HR</th>
+                <th 
+                  data-tooltip="Outs Recorded"
+                  className="draft__head-items">O</th>
+                <th 
+                  data-tooltip="Walks"
+                  className="draft__head-items--tooltip">BB</th>
+                <th 
+                  data-tooltip="Strikeouts"
+                  className="draft__head-items--tooltip">SO</th>
+                <th 
+                  data-tooltip="Walks And Hits Per Inning Pitched"
+                  className="draft__head-items--tooltip">WHIP</th>
+                <th 
+                  className="draft__head-items"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      
-        <table className={`tab${this.state.active === "--batters" ? '--batter' : ""}`}>
-          <caption>Batters Available</caption>
-          <thead>
-            <tr>
-              <th>
-                  Name
-              </th>
-              <th>
-                  POS
-              </th>
-              <th>
-                  G
-              </th>
-              <th>
-                  AB
-              </th>
-              <th>
-                  H
-              </th>
-              <th>
-                  1B
-              </th>
-              <th>
-                  2B
-              </th>
-              <th>
-                  3B
-              </th>
-              <th>
-                  HR
-              </th>
-              <th>
-                  RBI
-              </th>
-              <th>
-                  SO
-              </th>
-              <th>
-                  SFC
-              </th>
-              <th>
-                  AVG
-              </th>
-              <th>
-                  OBP
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {battingStats.map(players => (
-              <tr key={players.id}>
-                <td>{players.player_name}</td> 
-                <td>Batters</td>
-                <td>{players.appearances}</td>
-                <td>{players.at_bats}</td>
-                <td>{players.hits}</td>
-                <td>{players.singles}</td>
-                <td>{players.doubles}</td>
-                <td>{players.triples}</td>
-                <td>{players.home_runs}</td>
-                <td>{players.runs_batted_in}</td>
-                <td>{players.strikeouts}</td>
-                <td>{players.sacrifices}</td>
-                <td>{players.batting_average}</td>
-                <td>{players.on_base_percentage}</td>
-          
-                <td>
-                  <button 
-                    className="draft"
-                    value="draftBatter"
-                    onClick={event => this.handleDraftedPlayer(event, players)}
-                      >
-                      Draft
-                  </button>
-                </td>
+            </thead>
+            <tbody className="draft__body">
+              {pitchingStats.map(pitchingStats => (
+                <tr  
+                  className="draft__row"
+                  key={pitchingStats.id}>
+                  <td className="draft__row-items--name">{pitchingStats.player_name}</td> 
+                  {/* <td className="draft__row-items">Pitcher</td> */}
+                  <td className="draft__row-items">{pitchingStats.games}</td>
+                  <td className="draft__row-items">{pitchingStats.wins}</td>
+                  <td className="draft__row-items">{pitchingStats.losses}</td>
+                  <td className="draft__row-items">{pitchingStats.era}</td>
+                  <td className="draft__row-items">{pitchingStats.quality_starts}</td> 
+                  <td className="draft__row-items">{pitchingStats.shutouts}</td>
+                  <td className="draft__row-items">{pitchingStats.hits_allowed}</td>
+                  <td className="draft__row-items">{pitchingStats.runs_allowed}</td>
+                  <td className="draft__row-items">{pitchingStats.hrs_allowed}</td>
+                  <td className="draft__row-items">{pitchingStats.outs_recorded}</td>
+                  <td className="draft__row-items">{pitchingStats.walks}</td> 
+                  <td className="draft__row-items">{pitchingStats.strikeouts}</td> 
+                  <td className="draft__row-items">{pitchingStats.whip}</td> 
+                  <td className="draft__row-items--buttons">
+                    <button 
+                      className="draft__buttons--player"
+                      value="draftPitcher"
+                      onClick={event => this.handleDraftedPlayer(event, pitchingStats)}
+                        >
+                        Draft
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        
+          <table className={`draft__tab${this.state.active === "--batters" ? '--batter' : ""}`}>
+            {/* <caption className="draft__table-heading">Batters Available</caption> */}
+            <thead className="draft__head">
+              <tr className="draft__row--head">
+                <th className="draft__head-items--name">Name</th>
+                {/* <th className="draft__head-items">POS</th> */}
+                <th 
+                  data-tooltip="Appearances"
+                  className="draft__head-items--tooltip">A</th>
+                <th 
+                  data-tooltip="At Bats"
+                  className="draft__head-items--tooltip">AB</th>
+                <th 
+                  data-tooltip="Hits"
+                  className="draft__head-items--tooltip">H</th>
+                <th 
+                  data-tooltip="Singles"
+                  className="draft__head-items--tooltip">1B</th>
+                <th 
+                  data-tooltip="Doubles"
+                  className="draft__head-items--tooltip">2B</th>
+                <th 
+                  data-tooltip="Triples"
+                  className="draft__head-items--tooltip">3B</th>
+                <th 
+                  data-tooltip="Home Runs"
+                  className="draft__head-items--tooltip">HR</th>
+                <th 
+                  data-tooltip="Runs Batted In"
+                  className="draft__head-items--tooltip">RBI</th>
+                <th 
+                  data-tooltip="Strikeouts"
+                  className="draft__head-items--tooltip">SO</th>
+                <th 
+                  data-tooltip="Sacrifices"
+                  className="draft__head-items--tooltip">SFC</th>
+                <th 
+                  data-tooltip="Batting Average"
+                  className="draft__head-items--tooltip">BA</th>
+                <th 
+                  data-tooltip="On Base Percentage"
+                  className="draft__head-items--tooltip">OBP</th>
+                <th 
+                  className="draft__head-items"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="draft__body">
+              {battingStats.map(players => (
+                <tr 
+                  className="draft__row"
+                  key={players.id}>
+                  <td className="draft__row-items--name">{players.player_name}</td> 
+                  {/* <td className="draft__row-items">Batters</td> */}
+                  <td className="draft__row-items">{players.appearances}</td>
+                  <td className="draft__row-items">{players.at_bats}</td>
+                  <td className="draft__row-items">{players.hits}</td>
+                  <td className="draft__row-items">{players.singles}</td>
+                  <td className="draft__row-items">{players.doubles}</td>
+                  <td className="draft__row-items">{players.triples}</td>
+                  <td className="draft__row-items">{players.home_runs}</td>
+                  <td className="draft__row-items">{players.runs_batted_in}</td>
+                  <td className="draft__row-items">{players.strikeouts}</td>
+                  <td className="draft__row-items">{players.sacrifices}</td>
+                  <td className="draft__row-items">{players.batting_average}</td>
+                  <td className="draft__row-items">{players.on_base_percentage}</td>
+                  <td  className="draft__row-items--buttons">
+                    <button 
+                      className="draft__buttons--player"
+                      value="draftBatter"
+                      onClick={event => this.handleDraftedPlayer(event, players)}
+                        >
+                        Draft
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
       </div>
     );

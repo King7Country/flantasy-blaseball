@@ -1,7 +1,23 @@
-// .test--the-class {
-//     display: none;
+@import "../../styles/global.scss";
 
-//     &:nth-child(1) {
-//         display: block;
-//     }
-// }
+.user {
+    padding: 1em;
+
+    &__username {
+        margin-bottom: 1em;
+    }
+
+    &__teams-header {
+        margin-bottom: 1em;
+    }
+
+    &__no-team {
+        height: 15em;
+        @include flex-container(space-between, flex-start, wrap, column);
+
+        &--sub {
+            height: 5em;
+            @include flex-container(space-between, flex-start, wrap, column);
+        }
+    }
+}

@@ -1,25 +1,33 @@
 @import "../../styles/global.scss";
 
 .header {
-    margin-bottom: 2.5em;
-    padding-left: 2.5em;
-    width: 100%;
-    height: 5em;
+    // margin-bottom: 1.5em;
+    padding: 1em 0;
+    // padding-left: 2.5em;
+    // width: 100%;
+    // height: 5em;
     @include flex-container(space-between);
     position: relative;
-    color: white;
-    background-color: #343a40;
+    // color: white;
+    // background-color: #343a40;
+
+    &__title {
+        margin-left: .85em;
+        font-size: 1.5rem;
+    }
 }
 
 .nav {
+    margin-top: .5em;
     width: 100%;
     // add css animations
-    height: 100vh;
-    position: absolute;
-    top: 0;
+    // height: 100vh;
+    // position: absolute;
+    // top: 0;
     display: block;
     color: white;
-    background-color: #343a40;
+    // background-color: #343a40;
+    display: block;
 
     &--close {
         display: none;
@@ -32,41 +40,45 @@
 
     &__toggle {
         position: absolute;
-        right: 2.5em;
+        right: 1.5em;
 
         &--open {
             @extend .nav__toggle;
-            // top: .25em;
         }
 
         &--closed {
             @extend .nav__toggle;
+            top: 1em;
+            font-size: 1rem;
+            color: white;
+            background-color: $global-text;
         }
     }
 
     &__list {
-        margin: 3.5em;
-        @include flex-container(center, center, wrap, column);
+        // margin: 3.5em;
+        @include flex-container(center, center, wrap, row);
         list-style: none;
-        color: white;
+        // color: white;
     }
 
-    &__item {
-        margin: 2.5em 0;
-        color: white;
+    &__items {
+        // margin: 2.5em 0;
+        color: $global-text;
     }
 
-    &__link {
-        padding: 1em;
-        color: white;
+    &__links {
+        padding: .5em 1em;
+        color: $global-text;
         text-decoration: none;
-        display: inline-block
-    }
-}
+        display: inline-block;
 
-a {
-    padding: 1em;
-    color: white;
-    text-decoration: none;
-    display: inline-block
+        &:hover {
+            background-color: $interactive;
+        }
+    }
+
+    &__button {
+        @extend .nav__links;
+    }
 }

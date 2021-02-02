@@ -1,0 +1,74 @@
+@import "../../styles/global.scss";
+
+.login {
+    @include flex-container(center, center, wrap, column);
+    height: 100vh;
+
+   
+    &__header-container {
+        margin-bottom: 5em;
+        width: 100%;
+        @include flex-container();
+    }
+    
+    &__header {
+        margin-left: .5em;
+        // font-size: 2.5rem;
+
+        @include tablet {
+            font-size: 2.5rem;
+        }
+    }
+
+    &__logo {
+        padding-bottom: .5em;
+        display: block;
+        animation-name: spin;
+        animation-duration: 5000ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear; 
+
+        @include tablet {
+            width: 2.5rem;
+        }
+    }
+
+    @keyframes spin {
+        from {
+            transform:rotate(0deg);
+        }
+        to {
+            transform:rotate(360deg);
+        }
+    }
+
+    &__input {
+        margin: .5em;
+        padding: 1em;
+        width: 60%;
+        height: 3em;
+        font-size: 1rem;
+        border: 2px solid rgb(66, 66, 66); ; 
+        border-radius: .25em;
+        // rgb(138, 65, 134)
+     
+        &--bottom {
+            @extend .login__input;
+            margin-bottom: 2em;
+        }
+    }
+
+    &__button {
+        padding: 1em;
+        margin: .5em;
+        width: 60%;
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        background-color: rgb(66, 66, 66); 
+      
+        border-radius: .25em;
+       
+    }
+
+}

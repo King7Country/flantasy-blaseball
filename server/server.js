@@ -226,7 +226,7 @@ app.get("/simulated-pitchers/:id", (req,res) => {
         simulatedPitcher.walks = pitcher.walks + (simulatedPoints(5) * numberOfSimGames);
         simulatedPitcher.whip = pitcher.whip + (simulatedPoints(5) * numberOfSimGames);
         simulatedPitcher.win_pct = pitcher.win_pct + (simulatedPoints(5) * numberOfSimGames);
-        simulatedPitcher.wins = pitcher.wins + (simulatedPoints(1) + simulatedPoints(1) * numberOfSimGames);
+        simulatedPitcher.wins = pitcher.wins + (simulatedPoints(2) + simulatedPoints(1) * numberOfSimGames);
         
         simulatedPitchersList.push(simulatedPitcher);
       })
