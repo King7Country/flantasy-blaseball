@@ -32,7 +32,6 @@ class Login extends React.Component {
             user.updateProfile({
                displayName: this.state.userName
            })
-            // fire.database().ref('users').push(userId, this.state.email);
             this.props.history.push('/');
         })
         .then((res) => console.log(res))

@@ -22,9 +22,7 @@ const BATTING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?catego
 app.use(express.json());
 app.use(cors());
 
-
-
-app.listen(port, () => console.log("Server's up! Running hard on port: http://localhost:7777"));
+app.listen(port, () => console.log("Server's up! Running hard on port: http://localhost:7877"));
 
 
 //
@@ -226,7 +224,7 @@ app.get("/simulated-pitchers/:id", (req,res) => {
         simulatedPitcher.walks = pitcher.walks + (simulatedPoints(5) * numberOfSimGames);
         simulatedPitcher.whip = pitcher.whip + (simulatedPoints(5) * numberOfSimGames);
         simulatedPitcher.win_pct = pitcher.win_pct + (simulatedPoints(5) * numberOfSimGames);
-        simulatedPitcher.wins = pitcher.wins + (simulatedPoints(2) + simulatedPoints(1) * numberOfSimGames);
+        simulatedPitcher.wins = pitcher.wins + ((simulatedPoints(2) + simulatedPoints(2)) + simulatedPoints(1) * numberOfSimGames);
         
         simulatedPitchersList.push(simulatedPitcher);
       })
