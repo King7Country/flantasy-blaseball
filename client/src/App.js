@@ -5,7 +5,7 @@ import './App.css';
 import Login from "./components/Login/Login"
 import Home from "./components/Home/Home"
 import Standings from "./components/Standings/Standings"
-import TestDraft from "./components/TestDraft"
+import Draft from "./components/Draft/Draft"
 import Header from "./components/Header/Header"
 
 class App extends React.Component {
@@ -47,20 +47,13 @@ class App extends React.Component {
     return (
 
       <Router>
-  
         <Header user={user} />
         <Switch>
           <Route path="/login" render={(routerProps) => <Login {...routerProps} user={user} />} />
-
           <PrivateRoute path="/" exact component={(routerProps) => <Home {...routerProps} user={user} />} />
-
           <PrivateRoute path="/standings" exact component={(routerProps) => <Standings {...routerProps} user={user} />} />
-          {/* <Route path="/login" component={Login} /> */}
-          {/* <Route path="/playerlist" component={PlayerList} /> */}
-          <PrivateRoute path="/testdraft" exact component={TestDraft} />
-
+          <PrivateRoute path="/draft" exact component={Draft} />
         </Switch>
-
       </Router>
 
     );

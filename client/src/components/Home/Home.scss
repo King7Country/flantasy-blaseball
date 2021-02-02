@@ -20,6 +20,7 @@
     }
 
     &__no-team {
+        margin-top: 1em; 
         height: 15em;
         @include flex-container(space-between, flex-start, wrap, column);
 
@@ -37,7 +38,6 @@
             font-size: 2.06em;
         }
     }
-
 
     &__logout {
         display: block;
@@ -168,7 +168,6 @@
 
     &__head-items {
         padding: .15em;
-        position: relative;
         font-size: .7rem;
         z-index: 2;
 
@@ -185,24 +184,26 @@
 
         &--tooltip {
             @extend .user__head-items;
+            position: relative;
+
             &:hover {
                 cursor: default;
             }
     
             &:hover:before {
                 content: attr(data-tooltip);
-                padding: .5em;
+                padding: .25em .5em;
                 width: 12em;
-                position:absolute;
+                position: absolute;
                 top: -100%;
                 transform: translateY(-10%);
                 transform: translateX(-50%);
+                font-size: .8rem;
                 text-align:center;
                 color:white;
                 background: $global-text;
                 border-radius: 5px;
             }
-    
         }
     }
 }

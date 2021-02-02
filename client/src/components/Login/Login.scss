@@ -2,7 +2,7 @@
 
 .login {
     @include flex-container(center, center, wrap, column);
-    height: 100vh;
+    height: 85vh;
 
    
     &__header-container {

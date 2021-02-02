@@ -1,26 +1,11 @@
 import React from "react"
 import axios from "axios"
-import fire from "../config/fire";
+import fire from "../../config/fire";
 import { v4 as uuidv4 } from 'uuid';
-import NameModal from '../components/NameModal/NameModal'
-import DraftModal from '../components/DraftModal/DraftModal'
-
-import "./TestDraft.scss"
-
-// import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-
-
-// If all players are authenticated and logged in, can give them access to the same (instanced) list of players to select from. That way if the list updates then it should update for all users! (thatnks Ashley!)
-
-// If CORS doesn't work try making axios calls from back-end. getrequest to my server which will have an axios call to the blasball API endpoint. Then return the res from axios in my req.body to my client. (thanks Hussein)
-// cors-anywhere API: 
-// const CORS = 'https://cors-anywhere.herokuapp.com/';
-//Currently using CORS browser extension - for now
-
-// Blaseball official API key - not in use
-// const API_ALL_TEAMS = 'https://www.blaseball.com/database/allTeams';
-// const API_PLAYERS = 'https://www.blaseball.com/database/players?ids='
-
+import NameModal from '../NameModal/NameModal'
+import DraftModal from '../DraftModal/DraftModal'
+import icon from "../../assets/images/baseball-icon.svg"
+import "./Draft.scss"
 
 const URL = 'http://localhost:7877';
 
@@ -53,10 +38,6 @@ class TestDraft extends React.Component {
     .catch(err => console.log("err bat: ", err));
   }
 
-  componentDidUpdate() {
-
-  }
-
   handleTeamName = (name) => {
     this.setState({teamName: name})
     console.log("newState: ", this.state.teamName)
@@ -82,32 +63,30 @@ class TestDraft extends React.Component {
     // check if total players is less then max amount
     if (totalPlayers < 12) {
       //check if pitcher and update the draftedPitcher and pitchingStats states
+      // create copy of state, push to array, set state: new array
       if (event.target.value === "draftPitcher" && this.state.draftedPitchers.length < 3) {
-        // init array, push to array, set state: new array
+
         let draftedPitchersList = this.state.draftedPitchers.slice();
         draftedPitchersList.unshift(draftedPlayer);
         this.setState({
           draftedPitchers: draftedPitchersList,
         })
+
         // filter pitchingStats state, remove the selected player, and save to new array. Set state: new array
         const updatedPitchingStats = this.state.pitchingStats.filter(player => {
           return player !== draftedPlayer
         })
         this.setState({pitchingStats: updatedPitchingStats})
-        // console.log("updated state: ",updatedPitchingStats)
       }
       //check if batter and update the draftedBatter and battingStats states
       else if (event.target.value === "draftBatter" && this.state.draftedBatters.length < 9) {
-        console.log("batter - draftPlayer: ", draftedPlayer)
-        // init array, push to array, set state: array
         let draftedBattersList = this.state.draftedBatters.slice();
         draftedBattersList.unshift(draftedPlayer);
       
         this.setState({
           draftedBatters: draftedBattersList,
         })
-        console.log("draftedBatters: ", draftedBattersList)
-
+        // filter battingStats state, remove the selected player, and save to new array. Set state: new array
         const updatedBattingStats = this.state.battingStats.filter(player => {
           return player !== draftedPlayer
         })
@@ -115,11 +94,13 @@ class TestDraft extends React.Component {
         console.log("updated batting state: ", this.state.battingStats)
       }
     }
+
     //if already selected max number of players for that position, let them know
     if (event.target.value === "draftPitcher" && this.state.draftedPitchers.length === 3) {
 
       this.setState({modalMessage: "You've already drafted the max number of players for that position."})
     } else if (event.target.value === "draftBatter" && this.state.draftedBatters.length === 9) {
+
     //if already selected max number of players for that position, let them know
       this.setState({modalMessage: "You've already drafted the max number of players for that position."})
     }
@@ -128,13 +109,16 @@ class TestDraft extends React.Component {
   finishDraft(state) {
     const totalPlayers = this.state.draftedPitchers.length + this.state.draftedBatters.length;
 
+    //if correct amount of players drafted, create new team object and send to database
     if (totalPlayers === 12) {
 
       let teamName = this.state.teamName;
       const userId = fire.auth().currentUser.uid;
+      const userName = fire.auth().currentUser.displayName;
       let teamId = uuidv4();
       let newTeam = {
         userId: userId,  
+        userName: userName,  
         teamId: teamId,
         teamName: teamName,
         pitchers: state.draftedPitchers,
@@ -147,6 +131,7 @@ class TestDraft extends React.Component {
         this.setState({modalMessage: `Congratulations! The draft is complete, you can safely return to low pressure situations.`});
     }
 
+    //if insufficient player number, let them know
    if (totalPlayers < 12) {
     this.setState({modalMessage: `You've only selected ${totalPlayers} players, select a few more players until you have 12 on your team.`});
     }
@@ -154,17 +139,10 @@ class TestDraft extends React.Component {
   }
 
   render() {
-    const user = fire.auth().currentUser;
     const pitchingStats = this.state.pitchingStats;
     const draftedPitchers = this.state.draftedPitchers;
     const battingStats = this.state.battingStats;
     const draftedBatters = this.state.draftedBatters;
-
-
-    console.log("battingStats: ", battingStats)
-    console.log("pitchingStats: ", pitchingStats)
-    console.log("combined: ", pitchingStats.length + battingStats.length)
-    console.log("this.state.modalMessage: ", this.state.modalMessage)
 
      if (this.state.modalTeamName) {
       return (
@@ -177,17 +155,65 @@ class TestDraft extends React.Component {
     }
      else if (!this.state.pitchingStats.length && !this.state.battingStats.length ) {
       return (
-        <div
-          style={{
-            marginTop: "10em",
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}>
-          <h2>Loading...</h2>
-        </div>
+          <>
+            <div className="draft__container">
+              <h2 className="draft__heading">Draft</h2>
+
+              <div className="draft__selected-sub-container">
+                <h2 className="draft__team-name">{this.state.teamName}</h2>
+                <caption className="draft__table-heading--selected">Selected Players</caption>
+              </div>
+              <div className="draft__selected">
+                <table className="draft__selected-table">
+                  <thead className="draft__head">
+                    <tr className="draft__row--head">
+                      <th className="draft__head-items">
+                          Name
+                      </th>
+                      <th className="draft__head-items">
+                          POS
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="draft__body">
+                  {draftedPitchers.map(pitcher => (
+                      <tr 
+                        className="draft__row" 
+                        key={pitcher.id}>
+                        <td className="draft__row-items--selected">{pitcher.player_name}</td> 
+                        <td className="draft__row-items--selected">Pitcher</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div> 
+              <button 
+                className="draft__buttons--finish"
+                onClick={() => this.finishDraft(this.state)}
+                >
+                Finish Draft
+              </button>
+
+              <div className="draft__tab-container">
+                <button
+                  className={`draft__tab-buttons${this.state.active === "--pitchers" ? '--pitcher' : ""}`}
+                  value="pitchers-tab"
+                  onClick={event => this.handleTab(event, this.state.active)}
+                  >Pitchers
+                </button>
+                <button
+                  className={`draft__tab-buttons${this.state.active === "--batters" ? '--batter' : ""}`}
+                  value="batters-tab"
+                  onClick={event => this.handleTab(event, this.state.active)}
+                  >Batters
+                </button>
+              </div>
+              <div className="draft__loading-container">
+                <h2 className="draft__loading">Loading...</h2>
+                <img className="draft__logo" src={icon} alt="baseball"/>
+              </div>
+            </div> 
+        </>
       );
     }
     if (this.state.modalMessage) {
@@ -207,7 +233,6 @@ class TestDraft extends React.Component {
           <caption className="draft__table-heading--selected">Selected Players</caption>
         </div>
        
-
         <div className="draft__selected">
           <table className="draft__selected-table">
             <thead className="draft__head">
@@ -231,18 +256,7 @@ class TestDraft extends React.Component {
               ))}
             </tbody>
           </table>
-
           <table className="draft__selected-table">
-            {/* <thead className="draft__head">
-              <tr className="draft__row--head">
-                <th className="draft__head-items">
-                    Name
-                </th>
-                <th className="draft__head-items">
-                    POS
-                </th>
-              </tr>
-            </thead> */}
             <tbody className="draft__body">
             {draftedBatters.map(batter => (
                 <tr 
@@ -282,11 +296,10 @@ class TestDraft extends React.Component {
           <table 
             className={`draft__tab${this.state.active === "--pitchers" ? '--pitcher' : ""}`}
             >
-            {/* <caption className="draft__table-heading">Pitchers Available</caption> */}
+
             <thead className="draft__head">
               <tr className="draft__row--head">
                 <th className="draft__head-items--name">Name</th>
-                {/* <th className="draft__head-items">POS</th> */}
                 <th 
                   data-tooltip="Games Played"
                   className="draft__head-items--tooltip">G</th>
@@ -316,7 +329,7 @@ class TestDraft extends React.Component {
                   className="draft__head-items--tooltip">HR</th>
                 <th 
                   data-tooltip="Outs Recorded"
-                  className="draft__head-items">O</th>
+                  className="draft__head-items--tooltip">O</th>
                 <th 
                   data-tooltip="Walks"
                   className="draft__head-items--tooltip">BB</th>
@@ -336,7 +349,6 @@ class TestDraft extends React.Component {
                   className="draft__row"
                   key={pitchingStats.id}>
                   <td className="draft__row-items--name">{pitchingStats.player_name}</td> 
-                  {/* <td className="draft__row-items">Pitcher</td> */}
                   <td className="draft__row-items">{pitchingStats.games}</td>
                   <td className="draft__row-items">{pitchingStats.wins}</td>
                   <td className="draft__row-items">{pitchingStats.losses}</td>
@@ -365,11 +377,9 @@ class TestDraft extends React.Component {
           </table>
         
           <table className={`draft__tab${this.state.active === "--batters" ? '--batter' : ""}`}>
-            {/* <caption className="draft__table-heading">Batters Available</caption> */}
             <thead className="draft__head">
               <tr className="draft__row--head">
                 <th className="draft__head-items--name">Name</th>
-                {/* <th className="draft__head-items">POS</th> */}
                 <th 
                   data-tooltip="Appearances"
                   className="draft__head-items--tooltip">A</th>
@@ -416,7 +426,6 @@ class TestDraft extends React.Component {
                   className="draft__row"
                   key={players.id}>
                   <td className="draft__row-items--name">{players.player_name}</td> 
-                  {/* <td className="draft__row-items">Batters</td> */}
                   <td className="draft__row-items">{players.appearances}</td>
                   <td className="draft__row-items">{players.at_bats}</td>
                   <td className="draft__row-items">{players.hits}</td>
