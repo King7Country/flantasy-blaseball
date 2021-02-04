@@ -196,20 +196,20 @@
 
             }
 
-            &:hover:before {
-                content: attr(data-tooltip);
-                padding: .5em;
-                width: 12em;
-                position: absolute;
-                top: -100%;
-                transform: translateY(-10%);
-                transform: translateX(-50%);
-                text-align: center;
-                color :white;
-                background: $global-text;
-                border-radius: 5px;
-                z-index: 2;
-            }
+            // &:hover:before {
+            //     content: attr(data-tooltip);
+            //     padding: .5em;
+            //     width: 12em;
+            //     position: absolute;
+            //     top: -100%;
+            //     transform: translateY(-10%);
+            //     transform: translateX(-50%);
+            //     text-align: center;
+            //     color :white;
+            //     background: $global-text;
+            //     border-radius: 5px;
+            //     z-index: 2;
+            // }
         }
     }
 
