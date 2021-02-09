@@ -7,7 +7,9 @@ import DraftModal from '../DraftModal/DraftModal'
 import icon from "../../assets/images/baseball-icon.svg"
 import "./Draft.scss"
 
-const URL = 'http://localhost:7877';
+const API_URL = process.env.NODE_ENV === "production"
+  ? 'https://YOUR_HEROKU_APP_NAME.herokuapp.com'
+  : 'http://localhost:7877';
 
 class TestDraft extends React.Component {
 
@@ -25,12 +27,12 @@ class TestDraft extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`http://localhost:7877/pitchers`)
+    axios.get(`${API_URL}/pitchers`)
     .then(res => {
       this.setState({pitchingStats: res.data})
     })
     .catch(err => console.log("err pitch: ", err));
-    axios.get(`http://localhost:7877/batters`)
+    axios.get(`${API_URL}/batters`)
     .then(res => {
       console.log("res: ", res)
       this.setState({battingStats: res.data})
@@ -40,7 +42,6 @@ class TestDraft extends React.Component {
 
   handleTeamName = (name) => {
     this.setState({teamName: name})
-    console.log("newState: ", this.state.teamName)
   }
 
   handleCloseModal = (event) => {
@@ -91,7 +92,6 @@ class TestDraft extends React.Component {
           return player !== draftedPlayer
         })
         this.setState({battingStats: updatedBattingStats})
-        console.log("updated batting state: ", this.state.battingStats)
       }
     }
 

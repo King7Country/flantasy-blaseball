@@ -33,22 +33,7 @@ app.get("/pitchers", (_req,res) => {
     // get all players
     axios.get(`${ALL_PLAYERS}`)
     .then(response => {
-    //   console.log("res: ", response)
       let data = response.data;
-      //loop through the returned list of all players and remove any players that are deceased or have null position data
-      // let livingPlayers = [];
-      // data.map(item => {
-      //   if (!item.deceased && item.position_type) {
-      //     let player =  {
-      //       id: item.player_id,
-      //       name: item.player_name,
-      //       team: item.team,
-      //       position: item.position_type
-      //     }
-      //     return livingPlayers.push(player);
-      //   }
-      // })      
-      // console.log("living players:", livingPlayers[0]);
       
       let pitchers = [];
       data.map(player => {
@@ -56,18 +41,12 @@ app.get("/pitchers", (_req,res) => {
           return pitchers.push(player);
           }
       })
-      // console.log("pitchers:", pitchers[0]);
 
       let pitcherIds = [];
       pitchers.map(pitcher => {
         let id = pitcher.player_id ;
         return pitcherIds.push(id);
       })
-      // console.log("ids:", pitcherIds.length);
-
-      // let halfPitcherIds = Math.floor(pitcherIds.length / 2)
-      // let pitcherIdsFirstHalf = pitcherIds.slice(0, halfPitcherIds);
-      // let pitcherIdsSecondHalf = pitcherIds.slice(halfPitcherIds, pitcherIds.length);
 
       axios.get(`${PITCHING_STATS}${pitcherIds}`)
       .then(response => {
@@ -88,7 +67,6 @@ app.get("/batters", (_req,res) => {
     // get all players
     axios.get(`${ALL_PLAYERS}`)
     .then(response => {
-    //   console.log("res: ", response)
       let data = response.data;
       
       let batters = [];
@@ -103,7 +81,6 @@ app.get("/batters", (_req,res) => {
         let id = batter.player_id;
           return batterIds.push(id);
       })
-      // console.log("batter Ids: ", batterIds.length)
 
       //too many http headers to send at once, split in half first
       /* *** NOT RETURNING CORRECT AMOUNT OF PLAYERS??? *** */
@@ -139,12 +116,9 @@ app.get("/batters", (_req,res) => {
 //API endpount takes in a list of player id's seperated by a comma
 app.get("/pitchers-list/:id", (req, res) => {
   const reqPitchersUrl = req.url.substring('/pitchers-list/'.length);
-  // console.log("pit req url:",req.url)
-  // console.log("pit req url string:", reqPitchersUrl)
+
   axios.get(`${PITCHING_STATS}${reqPitchersUrl}`)
     .then(response => {
-      // console.log("pitchers: ", response.data[0])
-      console.log("pit res url:", response.data.length)
 
       return res.status(200).json(response.data)
     })
@@ -154,13 +128,12 @@ app.get("/pitchers-list/:id", (req, res) => {
 //get list of batters from API to check scores
 //API endpount takes in a list of player id's seperated by a comma
 app.get("/batters-list/:id", (req, res) => {
-  // console.log(res.url)
+
   const reqBattersUrl = req.url.substring('/batters-list/'.length);
-  // console.log("bat req url:",req.url)
-  // console.log("bat req url string:", reqBattersUrl)
+
   axios.get(`${BATTING_STATS}${reqBattersUrl}`)
     .then(response => {
-      // console.log("batters: ", response.data[0])
+
       return res.status(200).json(response.data)
     })
     .catch(err => console.log("err: ", err))
@@ -180,10 +153,9 @@ const simulatedPoints = (max) => {
 //API endpount takes in one user id
 app.get("/simulated-pitchers/:id", (req,res) => {
   let reqPitchers = req.url.substring('/simulated-pitchers/'.length)
-  // console.log("reqPitchers substring: ", reqPitchers)
 
   reqPitchers = reqPitchers.split(",");
-  // console.log("reqPitchers split: ", reqPitchers)
+
   const simulatePitcherPromise = new Promise((resolve, reject) => {
 
   
@@ -242,10 +214,10 @@ app.get("/simulated-pitchers/:id", (req,res) => {
 app.get("/simulated-batters/:id", (req,res) => {
 // const simulatePitcherPromise = new Promise((resolve, reject) => {
   let reqBatters = req.url.substring('/simulated-batters/'.length)
-  // console.log("reqPitchers substring: ", reqPitchers)
+
   
   reqBatters = reqBatters.split(",");
-  // console.log("reqPitchers split: ", reqPitchers)
+
   // const simulateBatterPromise = new Promise((resolve, reject) => {
     
   // get players matching req
@@ -322,5 +294,9 @@ app.get("/simulated-batters/:id", (req,res) => {
         console.log(numberOfSimGames);
         numberOfSimGames++;
     }
-    setInterval(timer, 60000);
+    // one minute interval
+    // setInterval(timer, 60000);  
+     
+    // four hour interval
+    setInterval(timer, 14400000);   
     

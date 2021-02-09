@@ -37,7 +37,7 @@
         border-bottom: 1px solid gainsboro;
 
         &:hover {
-            background-color: rgb(255, 247, 255);
+            background-color: $interactive;
         }
 
         &-items {

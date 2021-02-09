@@ -3,7 +3,9 @@ import fire from '../../config/fire'
 import axios from "axios";
 import "./Home.scss";
 
-const url = 'http://localhost:7877';
+const API_URL = process.env.NODE_ENV === "production"
+  ? 'https://YOUR_HEROKU_APP_NAME.herokuapp.com'
+  : 'http://localhost:7877';
 
 class Home extends Component {
     state = {
@@ -92,14 +94,14 @@ class Home extends Component {
 
              // make axios call to server with the string of id's as paramaters
             //  axios.get(`http://localhost:7777/pitchers-list/${pitcherIdString}`) //external API
-             axios.get(`${url}/simulated-pitchers/${pitcherIdString}`) //simulated API
+             axios.get(`${API_URL}/simulated-pitchers/${pitcherIdString}`) //simulated API
               .then(res => {
                   this.setState({newPitcherStats: res.data});
               })
               .catch(err => console.log("err: ", err))
 
             //   axios.get(`http://localhost:7777/batters-list/${batterIdString}`) //actual API
-              axios.get(`${url}/simulated-batters/${batterIdString}`) //simulated API
+              axios.get(`${API_URL}/simulated-batters/${batterIdString}`) //simulated API
                 .then(res => {
                     return this.setState({newBatterStats: res.data});
                 })

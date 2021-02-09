@@ -105,8 +105,8 @@
             &--pitcher {
                 @extend .draft__tab-buttons;
                 width: 100%;
-                border-bottom: 2px solid rgb(248, 213, 248);
-                border-right: 2px solid rgb(253, 205, 253);
+                border-bottom: 2px solid rgb(250, 215, 250);
+                border-right: 2px solid rgb(250, 215, 250);
                 border-bottom-right-radius: 2.5px;
             }
             &--batter {
@@ -133,7 +133,7 @@
         border-bottom: 1px solid gainsboro;
 
         &:hover {
-            background-color: rgb(255, 247, 255);
+            background-color:   $interactive;
         }
 
         &--head {
