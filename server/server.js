@@ -4,7 +4,7 @@ const axios = require('axios');
 const cors = require('cors');
 const app = express();
 // const { createProxyMiddleware } = require('http-proxy-middleware');
-const port = 7877;
+const PORT = process.env.PORT || 7877;
 // const warehousesRoute = require("./routes/warehouses");
 // const inventoriesRoute = require("./routes/inventories")
 // const uuid4 = require('uuid4');
@@ -22,7 +22,7 @@ const BATTING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?catego
 app.use(express.json());
 app.use(cors());
 
-app.listen(port, () => console.log("Server's up! Running hard on port: http://localhost:7877"));
+app.listen(PORT, () => console.log(`Server's up! Running hard on port: ${PORT}`));
 
 
 //
