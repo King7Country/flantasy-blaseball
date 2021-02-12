@@ -7,8 +7,8 @@ app.use(express.json());
 app.use(cors());
 
 const PITCHING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?category=pitching&season=10&playerIds=';
-const BATTING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?category=batting&season=10&playerIds=';
 
+const BATTING_STATS = 'https://api.blaseball-reference.com/v1/playerStats?category=batting&season=10&playerIds=';
 
 //get list of pitchers from API to check scores
 //API endpount takes in a list of player id's seperated by a comma
