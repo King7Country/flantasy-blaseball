@@ -8,7 +8,7 @@ import icon from "../../assets/images/baseball-icon.svg"
 import "./Draft.scss"
 
 const API_URL = process.env.NODE_ENV === "production"
-  ? 'https://YOUR_HEROKU_APP_NAME.herokuapp.com'
+  ? 'https://flantasy-blaseball.herokuapp.com'
   : 'http://localhost:7877';
 
 class TestDraft extends React.Component {

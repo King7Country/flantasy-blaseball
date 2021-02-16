@@ -4,7 +4,7 @@ import axios from "axios";
 import "./Home.scss";
 
 const API_URL = process.env.NODE_ENV === "production"
-  ? 'https://YOUR_HEROKU_APP_NAME.herokuapp.com'
+  ? 'https://flantasy-blaseball.herokuapp.com'
   : 'http://localhost:7877';
 
 class Home extends Component {
@@ -19,7 +19,7 @@ class Home extends Component {
         origBatterStats: [],  //from db
         newBatterStats: [],   //from API - current stats
 
-        teamsWithPoints: [],  //teams/players with calculated fantasy points to be ,apped in render method
+        teamsWithPoints: [],  //teams/players with calculated fantasy points to be mapped in render method
     }
 
     componentDidMount() {
