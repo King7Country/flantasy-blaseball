@@ -81,10 +81,21 @@
             display: block;
             width: 100%;
 
+            @include tablet {
+                margin: 0 auto;
+                width: 600px;
+            }
+
         }
         &--batter {
             display: block;
             width: 100%;
+
+            @include tablet {
+                margin: 0 auto;
+                width: 540px;
+            }
+       
         }
 
         &-container {
@@ -109,6 +120,7 @@
                 border-right: 2px solid rgb(250, 215, 250);
                 border-bottom-right-radius: 2.5px;
             }
+            
             &--batter {
                 @extend .draft__tab-buttons;
                 width: 100%;
@@ -137,7 +149,7 @@
         }
 
         &--head {
-
+            width: 100%;
         }
 
         &-items {

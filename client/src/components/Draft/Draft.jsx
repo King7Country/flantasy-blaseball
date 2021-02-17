@@ -19,7 +19,8 @@ class TestDraft extends React.Component {
     battingStats: [],
    
     modalTeamName: true, //boolean display so user can chose team name
-    modalMessage: false, //set as a string to display if any errors 
+    modalMessage: false, //set as a string to display if any errors
+    draftFinished: false,  
     teamName: "",
     active: "--pitchers",
     draftedPitchers: [],
@@ -34,7 +35,6 @@ class TestDraft extends React.Component {
     .catch(err => console.log("err pitch: ", err));
     axios.get(`${API_URL}/batters`)
     .then(res => {
-      console.log("res: ", res)
       this.setState({battingStats: res.data})
     })
     .catch(err => console.log("err bat: ", err));
@@ -47,6 +47,9 @@ class TestDraft extends React.Component {
   handleCloseModal = (event) => {
     this.setState({modalTeamName: false})
     this.setState({modalMessage: false})
+    if (this.state.draftFinished) {
+      this.props.history.push('/')
+    }
   }
 
   handleTab(event) {
@@ -129,6 +132,7 @@ class TestDraft extends React.Component {
   
         // show completion message
         this.setState({modalMessage: `Congratulations! The draft is complete, you can safely return to low pressure situations.`});
+        this.setState({draftFinished: true})
     }
 
     //if insufficient player number, let them know
@@ -179,7 +183,7 @@ class TestDraft extends React.Component {
                   {draftedPitchers.map(pitcher => (
                       <tr 
                         className="draft__row" 
-                        key={pitcher.id}>
+                        key={pitcher.player_id}>
                         <td className="draft__row-items--selected">{pitcher.player_name}</td> 
                         <td className="draft__row-items--selected">Pitcher</td>
                       </tr>
@@ -220,6 +224,7 @@ class TestDraft extends React.Component {
       return (
         <DraftModal 
           modalMessage={this.state.modalMessage} 
+          draftFinished={this.state.draftFinished} 
           onClick={this.handleCloseModal} />
       )
     }
@@ -249,7 +254,7 @@ class TestDraft extends React.Component {
             {draftedPitchers.map(pitcher => (
                 <tr 
                   className="draft__row" 
-                  key={pitcher.id}>
+                  key={pitcher.player_id}>
                   <td className="draft__row-items--selected">{pitcher.player_name}</td> 
                   <td className="draft__row-items--selected">Pitcher</td>
                 </tr>
@@ -261,7 +266,7 @@ class TestDraft extends React.Component {
             {draftedBatters.map(batter => (
                 <tr 
                   className="draft__row" 
-                  key={batter.id}>
+                  key={batter.player_id}>
                   <td className="draft__row-items--selected">{batter.player_name}</td> 
                   <td className="draft__row-items--selected">Batter</td>
                 </tr>
@@ -347,17 +352,17 @@ class TestDraft extends React.Component {
               {pitchingStats.map(pitchingStats => (
                 <tr  
                   className="draft__row"
-                  key={pitchingStats.id}>
+                  key={pitchingStats.player_id}>
                   <td className="draft__row-items--name">{pitchingStats.player_name}</td> 
                   <td className="draft__row-items">{pitchingStats.games}</td>
                   <td className="draft__row-items">{pitchingStats.wins}</td>
                   <td className="draft__row-items">{pitchingStats.losses}</td>
-                  <td className="draft__row-items">{pitchingStats.era}</td>
+                  <td className="draft__row-items">{pitchingStats.earned_run_average}</td>
                   <td className="draft__row-items">{pitchingStats.quality_starts}</td> 
                   <td className="draft__row-items">{pitchingStats.shutouts}</td>
                   <td className="draft__row-items">{pitchingStats.hits_allowed}</td>
                   <td className="draft__row-items">{pitchingStats.runs_allowed}</td>
-                  <td className="draft__row-items">{pitchingStats.hrs_allowed}</td>
+                  <td className="draft__row-items">{pitchingStats.home_runs_allowed}</td>
                   <td className="draft__row-items">{pitchingStats.outs_recorded}</td>
                   <td className="draft__row-items">{pitchingStats.walks}</td> 
                   <td className="draft__row-items">{pitchingStats.strikeouts}</td> 
@@ -407,9 +412,9 @@ class TestDraft extends React.Component {
                 <th 
                   data-tooltip="Strikeouts"
                   className="draft__head-items--tooltip">SO</th>
-                <th 
+                {/* <th 
                   data-tooltip="Sacrifices"
-                  className="draft__head-items--tooltip">SFC</th>
+                  className="draft__head-items--tooltip">SFC</th> */}
                 <th 
                   data-tooltip="Batting Average"
                   className="draft__head-items--tooltip">BA</th>
@@ -424,7 +429,7 @@ class TestDraft extends React.Component {
               {battingStats.map(players => (
                 <tr 
                   className="draft__row"
-                  key={players.id}>
+                  key={players.player_id}>
                   <td className="draft__row-items--name">{players.player_name}</td> 
                   <td className="draft__row-items">{players.appearances}</td>
                   <td className="draft__row-items">{players.at_bats}</td>
@@ -435,7 +440,7 @@ class TestDraft extends React.Component {
                   <td className="draft__row-items">{players.home_runs}</td>
                   <td className="draft__row-items">{players.runs_batted_in}</td>
                   <td className="draft__row-items">{players.strikeouts}</td>
-                  <td className="draft__row-items">{players.sacrifices}</td>
+                  {/* <td className="draft__row-items">{players.sacrifices}</td> */}
                   <td className="draft__row-items">{players.batting_average}</td>
                   <td className="draft__row-items">{players.on_base_percentage}</td>
                   <td  className="draft__row-items--buttons">

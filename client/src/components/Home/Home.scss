@@ -78,13 +78,21 @@
         &--pitcher {
             margin: 0 auto;
             display: block;
-            max-width: 80%;
+            width: 250px;
+
+            @include tablet {
+                width: 335px;
+            }
         }
 
         &--batter {
             margin: 0 auto;
             display: block;
-            width: 90%;
+            width: 260px;
+
+            @include tablet {
+                width: 365px;
+            }
         }
 
         &-container {

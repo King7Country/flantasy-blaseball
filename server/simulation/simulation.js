@@ -92,7 +92,6 @@ const simulatedPoints = (max) => {
     // get players matching req
     axios.get(`${BATTING_STATS}${reqBatters}`)
     .then(response => {
-    //   console.log("res: ", response)
       let batters = response.data;
       batters = convertIntObj(batters);
       
@@ -160,7 +159,6 @@ const simulatedPoints = (max) => {
       //interval to simulate multiple games being played
       let numberOfSimGames = 1;
       const timer = () => {
-          console.log(numberOfSimGames);
           numberOfSimGames++;
       }
       // one minute interval

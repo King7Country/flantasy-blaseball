@@ -165,13 +165,13 @@ class Home extends Component {
                     //*IMPORTANT: need to re-set name and id to value of newPitcher as the subtraction above returns NaN for string values
                     updatedPitcher.batters_faced = updatedPitcher.batters_faced * .5;
                     updatedPitcher.bb_per_9 = updatedPitcher.bb_per_9 * .5;
-                    updatedPitcher.era = updatedPitcher.era * .5;
+                    updatedPitcher.earned_run_average = updatedPitcher.earned_run_average * .5;
                     updatedPitcher.games = newPitcher.games;
                     updatedPitcher.hits_allowed = updatedPitcher.hits_allowed * .5;
                     updatedPitcher.hits_per_9 = updatedPitcher.hits_per_9 * .5;
                     updatedPitcher.hpbs = updatedPitcher.hpbs * .5;
                     updatedPitcher.hr_per_9 = updatedPitcher.hr_per_9 * .5;
-                    updatedPitcher.hrs_allowed = updatedPitcher.hrs_allowed * .5;
+                    updatedPitcher.home_runs_allowed = updatedPitcher.home_runs_allowed * .5;
                     updatedPitcher.innings = updatedPitcher.innings * 3; 
                     updatedPitcher.k_bb = updatedPitcher.k_bb * .5;
                     updatedPitcher.k_per_9 = updatedPitcher.k_per_9 * .5;
@@ -348,7 +348,7 @@ class Home extends Component {
         } 
         if (!myTeams.length) {
             return (
-                <div class="user">
+                <div className="user">
                     <div className="user__sub-container">
                         <h1 className="user__username">{userName}</h1>
                         <button 
@@ -443,7 +443,7 @@ class Home extends Component {
                                 {team.pitchers.map(pitcher => (
                                 <tr 
                                     className="user__row"
-                                    key={pitcher.id}>
+                                    key={pitcher.player_id}>
                                     <td className="user__row-items--name">{pitcher.player_name}</td> 
                                     <td className="user__row-items">{pitcher.wins}</td>
                                     <td className="user__row-items">{pitcher.quality_starts}</td> 
@@ -494,7 +494,7 @@ class Home extends Component {
                             {team.batters.map(batter => (
                             <tr 
                                 className="user__row"
-                                key={batter.id}>
+                                key={batter.player_id}>
                                 <td className="user__row-items--name">{batter.player_name}</td> 
                                 <td className="user__row-items">{batter.hits}</td>
                                 <td className="user__row-items">{batter.singles}</td>

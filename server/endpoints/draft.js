@@ -37,7 +37,6 @@ app.get("/pitchers", (_req,res) => {
 
       axios.get(`${PITCHING_STATS}${pitcherIds}`)
       .then(response => {
-          console.log("pitcher res: ", response.data.length);
           let pitchingStats = response.data;
           return res.status(200).send(pitchingStats)
       })

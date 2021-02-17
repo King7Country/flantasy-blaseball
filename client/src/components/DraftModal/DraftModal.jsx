@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import "./DraftModal.scss"
 
 class NameModal extends React.Component {
