@@ -17,7 +17,7 @@
   }
 };
 
-$medium-breakpoint: 499px;
+$medium-breakpoint: 491px;
 
 @mixin tablet {
     @media screen and (min-width: $tablet-breakpoint) {
