@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, WithRouter } from 'react-router-dom';
+// import { Link, WithRouter } from 'react-router-dom';
 import fire from '../../config/fire';
 import "./Login.scss";
 import icon from "../../assets/images/baseball-icon.svg"

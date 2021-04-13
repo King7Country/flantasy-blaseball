@@ -1,31 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
 import "../Header/Header.scss"
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-let toggleNav = "--close"
+// let toggleNav = "--close"
 
-class Header extends React.Component {
+const Header = () => {
 
-    state = {
-        displayNav: false,
-    }
+    // const [displayHeader, setDisplayHeader] = useState("--hidden");
+   
+    // const [displayNav, setDisplayNav] = useState(false);
 
-    toggleHandler(event) {
-        event.preventDefault();
-        if (this.state.displayNav === false) {
-            toggleNav = "--open";
-            this.setState({displayNav: true});
-        } else {
-            toggleNav = "--close";
-            this.setState({displayNav: false});
-        }
-        console.log(this.state.displayNav, toggleNav)
-    }
+    // toggleHandler(event) {
+    //     event.preventDefault();
+    //     if (this.state.displayNav === false) {
+    //         toggleNav = "--open";
+    //         setDisplayNav(true);
+    //     } else {
+    //         toggleNav = "--close";
+    //         setDisplayNav(false);
+    //     }
+    //     console.log(displayNav, toggleNav)
+    // }
 
-    render() {
+    let location = useLocation();
+    console.log("Location: ", location)
 
-        return (
-            <>
+    if (location.pathname === "/login") {
+        return null
+    } 
+    return (
+        <>
             <header className="header">
                 <h2 className="header__title">Flantasy Blaseball</h2>
                 <nav className="nav">
@@ -52,10 +56,9 @@ class Header extends React.Component {
                     </ul>
                 </nav>
             </header>
-          
-            </>
-        )
-    }
+        </>
+    )
+  
 }
 
 export default Header
