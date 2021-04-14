@@ -23,11 +23,11 @@ const Header = () => {
     // }
 
     let location = useLocation();
-    console.log("Location: ", location)
 
     if (location.pathname === "/login") {
         return null
     } 
+    
     return (
         <>
             <header className="header">
