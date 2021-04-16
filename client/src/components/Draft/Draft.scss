@@ -142,6 +142,8 @@
 
     &__row {
         width: 100%;
+        // @include flex-container(flex-start, flex-start, nowrap, row);
+        height: 4em;
         border-bottom: 1px solid gainsboro;
 
         &:hover {
@@ -175,6 +177,17 @@
                 max-width: 5.5em;
                 font-weight: 600;
                 text-align: left;
+            }
+
+            &--team {
+                // margin-bottom: .25em;
+                margin-top: .5em;
+                min-width: 5em;
+                position: relative;
+                // top: 1em;
+                // left: .5em;
+                text-align: left;
+                font-size: .75em;
             }
 
             &--selected {

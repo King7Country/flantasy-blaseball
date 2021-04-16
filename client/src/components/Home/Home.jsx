@@ -36,7 +36,7 @@ class Home extends Component {
                 this.setState({user});                
             }
         })
-      }
+    }
 
     getTeams() {
         //get the users team information from database and set to state
