@@ -339,7 +339,7 @@ class Home extends Component {
         const userName = this.state.userName;
         const teamsWithPoints = this.state.teamsWithPoints
 
-        console.log("myTeams", myTeams)
+        console.log("teamsWithPoints", teamsWithPoints)
 
         if (!user) {
             return (

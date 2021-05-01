@@ -1,5 +1,4 @@
 import React from 'react';
-import { Lzink, WithRouter } from 'react-router-dom';
 import fire from '../../config/fire';
 import "./Login.scss";
 import icon from "../../assets/images/baseball-icon.svg"
