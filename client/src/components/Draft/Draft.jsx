@@ -14,6 +14,8 @@ const API_URL = process.env.NODE_ENV === "production"
 class TestDraft extends React.Component {
 
   state = {
+    userId: "",
+
     playerList: [],
     pitchingStats: [],
     battingStats: [],
@@ -28,6 +30,9 @@ class TestDraft extends React.Component {
   }
 
   componentDidMount() {
+    //
+    this.authListener();
+
     axios.get(`${API_URL}/pitchers`)
     .then(res => {
       this.setState({pitchingStats: res.data})
@@ -39,6 +44,30 @@ class TestDraft extends React.Component {
     })
     .catch(err => console.log("err bat: ", err));
   }
+
+  authListener() {
+    fire.auth().onAuthStateChanged((user) => {
+        if (user) {
+            this.setState({ userId: user.uid })
+            this.checkIfUserHasTeam();
+        } else {
+            this.setState({user});                
+        }
+    })
+  }
+
+  checkIfUserHasTeam() {
+    //check if user has a team already
+    const userId = this.state.userId;
+    const teamsRef = fire.database().ref(`teams`);
+    teamsRef.orderByChild("userId").equalTo(userId).once('value', (snapshot) => {
+      if (snapshot.val()) {
+        this.setState({modalTeamName: false})
+        this.setState({modalMessage: `Only one team is currently permitted per user. Check the standings to se how your team is doing.`});
+        this.setState({draftFinished: true})
+      }
+    })
+}
 
   handleTeamName = (name) => {
     this.setState({teamName: name})

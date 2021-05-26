@@ -10,6 +10,7 @@ class Login extends React.Component {
         email: "",
         pasword: "",
         active: true,
+        errorMessage: {error: false, message: "",},
     }
 
     login(event) {
@@ -21,22 +22,30 @@ class Login extends React.Component {
             this.props.history.push('/')
         }).catch((err) => {
             console.log(err)
+            this.setState({errorMessage: {error: true, message: err.message,}})
         });
     }
 
     signup(event) {
         event.preventDefault();
-        fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((res) => {
+        const email = this.state.email;
+        const password = this.state.password;
+        fire.auth().createUserWithEmailAndPassword(email, password).then((res) => {
             const user = fire.auth().currentUser;
            
             user.updateProfile({
                displayName: this.state.userName
            })
-            this.props.history.push('/');
+
+           return event
         })
-        .then((res) => console.log(res))
+        .then((res) => {
+          console.log(res)
+          this.login(res);
+        })
         .catch((err) => {
             console.log(err)
+            this.setState({errorMessage: {error: true, message: err.message,}})
         });
     }
 
@@ -137,6 +146,7 @@ class Login extends React.Component {
                         Sign up
                       </button>
                   </form> }
+                  <p className={`login-form__error--${this.state.errorMessage.error}`}>{this.state.errorMessage.message}</p>
             </div>
           </section>
         )

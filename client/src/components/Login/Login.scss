@@ -84,6 +84,22 @@
                 cursor: pointer;
             }
         }
+
+        &__error {
+            margin: 1em auto;
+            width: 60%;
+            text-align: center;
+            font-size: .8em;
+            font-weight: 600;
+            color: rgb(247, 28, 28);
+
+            &--true {
+                @extend .login-form__error;
+            }
+            &--false {
+                display: none;
+            }
+        }
     }
 
     &__tab {
@@ -121,5 +137,4 @@
             }
         }
     }
-
 }
