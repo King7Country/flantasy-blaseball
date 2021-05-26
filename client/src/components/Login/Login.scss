@@ -1,9 +1,14 @@
 @import "../../styles/global.scss";
 
 .login {
-    margin-top: 25%;
+    margin-top: 7.5em;
     @include flex-container(center, center, wrap, column);
     width: 100%;
+
+    @include desk {
+    margin-top: 15em;
+
+    }
    
     &__header-container {
         margin-bottom: 5em;

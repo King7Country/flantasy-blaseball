@@ -10,13 +10,18 @@
 
     &__container {
         width: 90%;
-        height: 60vw;
+        height: 300px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         background-color: white;
         border: 2px solid rgba(117, 117, 117, 0.5);
+
+        @include tablet {
+            max-width: 775px;
+            max-height: 40vh;
+        }
     }
 
     &__input {
